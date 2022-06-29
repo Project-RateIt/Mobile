@@ -1,9 +1,52 @@
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, StyleSheet, Image, Pressable, Button } from "react-native";
 
 const Product = ({ item, pressHandler, navigation, id }) => {
+  const [followed, setFollowed] = useState(false);
   const rate = () => navigation.navigate("Rate", { id: id });
-  const follow = () => navigation.navigate("Reset");
+  const follow = () => {
+    if (followed == false) {
+      fetch("http://91.227.2.183:443/products/follow", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          token: "6P1OJEMWRU_39781998_28-06-2022 22:03:14",
+          userId: 39781998,
+          productId: id,
+        }),
+      }).then((responce) => {
+        if (responce.status === 200) {
+          alert("Obserwujesz");
+        } else {
+          alert("Spróbuj ponownie");
+        }
+      });
+      setFollowed((isFollowed) => !isFollowed);
+      console.log(followed);
+    } else {
+      fetch("http://91.227.2.183:443/products/unfollow", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          token: "6P1OJEMWRU_39781998_28-06-2022 22:03:14",
+          userId: 39781998,
+          productId: id,
+        }),
+      }).then((responce) => {
+        console.log(followed);
+        if (responce.status === 200) {
+          alert("Nie obserwujesz");
+        } else {
+          alert("Spróbuj ponownie");
+        }
+      });
+      setFollowed((isFollowed) => !isFollowed);
+    }
+  };
 
   return (
     <View style={styles.listItem}>
@@ -18,7 +61,7 @@ const Product = ({ item, pressHandler, navigation, id }) => {
         </View>
       </Pressable>
       <View style={styles.action}>
-        <Button title="Polub" />
+        <Button title={followed ? "followed" : "follow"} onPress={follow} />
         <Button title="Oceń" onPress={rate} />
       </View>
     </View>

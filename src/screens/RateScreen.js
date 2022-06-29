@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { SafeAreaView, ScrollView } from "react-native";
-import { Appbar, Button, TextInput } from "react-native-paper";
+import { SafeAreaView, ScrollView, Button } from "react-native";
+import { Appbar, TextInput } from "react-native-paper";
 
 const RateScreen = ({ navigation, route }) => {
   const [rate, setRate] = useState("");
@@ -21,7 +21,7 @@ const RateScreen = ({ navigation, route }) => {
       }).then((responce) => {
         if (responce.status === 200) {
           alert("Oceniono pomyślnie");
-          navigation.navigate("Home");
+          navigation.navigate("MyProducts");
         } else {
           alert("Spróbuj ponownie");
         }
@@ -29,6 +29,27 @@ const RateScreen = ({ navigation, route }) => {
     } else {
       alert("Oceń od 1 do 10");
     }
+  };
+
+  const unrate = () => {
+    fetch("http://91.227.2.183:443/products/unrate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        token: "6P1OJEMWRU_39781998_28-06-2022 22:03:14",
+        userId: 39781998,
+        productId: route.params.id,
+      }),
+    }).then((responce) => {
+      if (responce.status === 200) {
+        alert("Usunięto ocenę pomyślnie");
+        navigation.navigate("MyProducts");
+      } else {
+        alert("Spróbuj ponownie");
+      }
+    });
   };
 
   return (
@@ -44,9 +65,9 @@ const RateScreen = ({ navigation, route }) => {
           value={rate}
           onChangeText={setRate}
         />
-        <Button mode="contained" onPress={rated}>
-          Oceń
-        </Button>
+        <Button title="Oceń" onPress={rated} />
+
+        <Button title="Usuń ocenę" onPress={unrate} />
       </ScrollView>
     </SafeAreaView>
   );
