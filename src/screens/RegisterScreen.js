@@ -12,7 +12,7 @@ export default function RegisterScreen({ navigation }) {
 
   const register = () => {
     setLoading(true);
-    fetch("127.0.0.1:5000/user/register", {
+    fetch("http://91.227.2.183:443/user/register", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -23,10 +23,17 @@ export default function RegisterScreen({ navigation }) {
         Email: email,
         Password: password,
       }),
+    }).then((responce) => {
+      responce.json();
+      if (responce.status === 200) {
+        setLoading(false);
+        alert("Rejestracja powiodła się");
+        navigation.navigate("Login");
+      } else {
+        setLoading(false);
+        alert("Błędne dane logowania");
+      }
     });
-    console.log(name, surname, email, password);
-    setLoading(false);
-    navigation.navigate("Login");
   };
 
   return (

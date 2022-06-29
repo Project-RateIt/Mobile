@@ -8,6 +8,7 @@ import ResetPasswordScreen from "./screens/ResetPasswordScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import MyProducts from "./screens/MyProductsScreen";
 import LastProducts from "./screens/LastProductsScreen";
+import RateScreen from "./screens/RateScreen";
 
 const { Navigator, Screen } = createStackNavigator();
 
@@ -22,6 +23,7 @@ const AppNavigation = () => {
         <Screen name="Settings" component={SettingsScreen}></Screen>
         <Screen name="MyProducts" component={MyProducts}></Screen>
         <Screen name="LastProducts" component={LastProducts}></Screen>
+        <Screen name="Rate" component={RateScreen}></Screen>
       </Navigator>
     </NavigationContainer>
   );

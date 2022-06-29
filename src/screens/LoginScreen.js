@@ -11,33 +11,10 @@ export default function LoginScreen({ navigation }) {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const login = async () => {
+  const login = () => {
     navigation.navigate("Home");
     setLoading(true);
-    // fetch("localhost:5000/user/login", {
-    //   method: "POST",
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   body: JSON.stringify({
-    //     Email: email,
-    //     Password: password,
-    //   }),
-    // }).then((responce) => {
-    //   responce.json();
-    //   if (responce.status === 200) {
-    //     setLoading(false);
-    //     navigation.navigate("Home");
-    //   } else {
-    //     setLoading(false);
-    //     Alert.alert("Błędne dane logowania", {
-    //       text: "OK",
-    //       onPress: () => console.log("OK Pressed"),
-    //     });
-    //   }
-    // });
-
-    const req = await fetch("192.168.0.108:5000/swagger/user/login", {
+    fetch("http://91.227.2.183:443/user/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -46,22 +23,18 @@ export default function LoginScreen({ navigation }) {
         Email: email,
         Password: password,
       }),
+    }).then((responce) => {
+      responce.json();
+      if (responce.status === 200) {
+        setLoading(false);
+        alert("Logowanie powiodło się");
+      } else {
+        setLoading(false);
+        alert("Błędne dane logowania");
+      }
     });
-
-    const res = await req.json();
-    console.log(res);
-
-    if (res.status === 200) {
-      setLoading(false);
-      navigation.navigate("Home");
-    } else {
-      setLoading(false);
-      Alert.alert("Błędne dane logowania", {
-        text: "OK",
-        onPress: () => console.log("OK Pressed"),
-      });
-    }
   };
+
   return (
     <SafeAreaView>
       <View>

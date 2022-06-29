@@ -1,30 +1,25 @@
 import React from "react";
-import {
-  View,
-  FlatList,
-  SafeAreaView,
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  Image,
-  Pressable,
-} from "react-native";
-import { Appbar, Button } from "react-native-paper";
+import { View, Text, StyleSheet, Image, Pressable, Button } from "react-native";
 
-const Product = ({ item, pressHandler }) => {
+const Product = ({ item, pressHandler, navigation, id }) => {
+  const rate = () => navigation.navigate("Rate", { id: id });
+  const follow = () => navigation.navigate("Reset");
+
   return (
     <View style={styles.listItem}>
       <Pressable style={styles.container} onPress={() => pressHandler(item)}>
-        <Image style={styles.image} source={require("../../assets/prof.jpg")} />
+        <Image style={styles.image} source={{ uri: item.image }} />
         <View style={styles.info}>
           <Text style={styles.text}>{item.name}</Text>
           <Text style={styles.text}>{item.producer}</Text>
-          <Text style={styles.text}>Ocena {item.rated}/10</Text>
+          <Text style={styles.text}>
+            Ocena {item.rateSum / item.rateCount}/10
+          </Text>
         </View>
       </Pressable>
       <View style={styles.action}>
-        <Button icon="heart" style={styles.button}></Button>
-        <Button icon="star" style={styles.button}></Button>
+        <Button title="Polub" />
+        <Button title="Oceń" onPress={rate} />
       </View>
     </View>
   );
@@ -32,13 +27,11 @@ const Product = ({ item, pressHandler }) => {
 
 const styles = StyleSheet.create({
   listItem: {
-    backgroundColor: "purple",
-    padding: 5,
+    borderWidth: 1,
     flexDirection: "row",
-    alignItems: "center",
-    fontSize: 20,
   },
   container: {
+    backgroundColor: "red",
     flexDirection: "row",
     flex: 2,
   },
@@ -48,17 +41,17 @@ const styles = StyleSheet.create({
     height: 100,
   },
   info: {
-    alignItems: "center",
     flex: 1,
-  },
-  text: {
     justifyContent: "center",
+    alignItems: "center",
   },
+  text: {},
   action: {
+    backgroundColor: "green",
     flex: 1,
-    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
   },
-  button: {},
 });
 
 export default Product;

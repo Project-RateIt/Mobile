@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   FlatList,
@@ -9,59 +9,68 @@ import {
   Image,
   Pressable,
 } from "react-native";
-import Product from "../components/product";
+import Product from "../components/product/product";
+import { Searchbar } from "react-native-paper";
 
-const MyProducts = () => {
-  const [products, setProducts] = useState([
-    {
-      name: "Mój produkt 1",
-      id: "1",
-      producer: "Producent 1",
-      followed: true,
-      rated: "8",
-      img: "../../assets/prof.jpg",
-    },
-    {
-      name: "Mój produkt 2",
-      id: "2",
-      producer: "Producent 1",
-      followed: true,
-      rated: null,
-      img: "../../assets/prof.jpg",
-    },
-    { name: "Mój produkt 3", id: "3" },
-    { name: "Mój produkt 4", id: "4" },
-    { name: "Mój produkt 5", id: "5" },
-    { name: "Mój produkt 6", id: "6" },
-    { name: "Mój produkt 7", id: "7" },
-    { name: "Mój produkt 8", id: "8" },
-    { name: "Mój produkt 9", id: "9" },
-    { name: "Mój produkt 10", id: "10" },
-    { name: "Mój produkt 11", id: "11" },
-    { name: "Mój produkt 12", id: "12" },
-    { name: "Mój produkt 13", id: "13" },
-    { name: "Mój produkt 14", id: "14" },
-    { name: "Mój produkt 15", id: "15" },
-    { name: "Mój produkt 16", id: "16" },
-    { name: "Mój produkt 17", id: "17" },
-    { name: "Mój produkt 18", id: "18" },
-    { name: "Mój produkt 19", id: "19" },
-    { name: "Mój produkt 20", id: "20" },
-  ]);
+const MyProducts = ({ navigation }) => {
+  const [query, setQuery] = useState("");
+  const [pageNumber, setPageNumber] = useState(0);
+
+  const [product, setProduct] = useState([]);
+
+  const search = () => {
+    fetch("http://91.227.2.183:443/products/search", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        token: "6P1OJEMWRU_39781998_28-06-2022 22:03:14",
+        query: query,
+        page: pageNumber,
+        userId: 39781998,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setProduct((previousData) => [...previousData, ...data]);
+      });
+  };
+
+  useEffect(() => {
+    search();
+  }, [pageNumber]);
+
+  useEffect(() => {
+    setProduct([]);
+  }, [query]);
 
   const pressHandler = (item) => {
-    console.log(item);
+    console.log(item.id);
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <Text>MyProducts</Text>
+      <Searchbar
+        placeholder="Search"
+        onChangeText={setQuery}
+        value={query}
+        onIconPress={search}
+      />
+
       <FlatList
-        data={products}
+        data={product}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <Product item={item} pressHandler={pressHandler} />
+          <Product
+            id={item.id}
+            item={item}
+            pressHandler={pressHandler}
+            navigation={navigation}
+          />
         )}
+        onEndReached={() => setPageNumber((previous) => (previous += 1))}
       />
     </SafeAreaView>
   );
