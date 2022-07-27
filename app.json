@@ -1,7 +1,8 @@
 {
   "expo": {
-    "name": "RateIT",
-    "slug": "RateIT",
+    "name": "RateIt",
+    "owner": "typojak",
+    "slug": "RateIt",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -14,15 +15,19 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.typojak.RateIt"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.typojak.RateIt"
     },
     "web": {
       "favicon": "./assets/favicon.png"

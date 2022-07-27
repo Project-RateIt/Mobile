@@ -1,9 +1,33 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Image, Pressable, Button } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Product = ({ item, pressHandler, navigation, id }) => {
   const [followed, setFollowed] = useState(false);
   const rate = () => navigation.navigate("Rate", { id: id });
+  const note = () => navigation.navigate("Note", { id: id });
+
+  const [token, setToken] = useState("");
+  const [userId, setUserId] = useState("");
+
+  const getData = () => {
+    try {
+      AsyncStorage.getItem("body").then((value) => {
+        if (value != null) {
+          let body = JSON.parse(value);
+          setToken(body.token);
+          setUserId(body.user.id);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
+
   const follow = () => {
     if (followed == false) {
       fetch("http://91.227.2.183:443/products/follow", {
@@ -12,8 +36,8 @@ const Product = ({ item, pressHandler, navigation, id }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          token: "6P1OJEMWRU_39781998_28-06-2022 22:03:14",
-          userId: 39781998,
+          token,
+          userId,
           productId: id,
         }),
       }).then((responce) => {
@@ -32,12 +56,11 @@ const Product = ({ item, pressHandler, navigation, id }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          token: "6P1OJEMWRU_39781998_28-06-2022 22:03:14",
-          userId: 39781998,
+          token,
+          userId,
           productId: id,
         }),
       }).then((responce) => {
-        console.log(followed);
         if (responce.status === 200) {
           alert("Nie obserwujesz");
         } else {
@@ -45,6 +68,7 @@ const Product = ({ item, pressHandler, navigation, id }) => {
         }
       });
       setFollowed((isFollowed) => !isFollowed);
+      console.log(followed);
     }
   };
 
@@ -63,6 +87,7 @@ const Product = ({ item, pressHandler, navigation, id }) => {
       <View style={styles.action}>
         <Button title={followed ? "followed" : "follow"} onPress={follow} />
         <Button title="Oceń" onPress={rate} />
+        <Button title="Notatka" onPress={note} />
       </View>
     </View>
   );

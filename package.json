@@ -1,5 +1,5 @@
 {
-  "name": "rateit",
+  "name": "RateIt",
   "version": "1.0.0",
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
@@ -14,6 +14,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.1.1",
     "@fortawesome/react-fontawesome": "^0.1.18",
     "@fortawesome/react-native-fontawesome": "^0.3.0",
+    "@react-native-async-storage/async-storage": "^1.17.7",
     "@react-navigation/native": "^6.0.10",
     "@react-navigation/native-stack": "^6.6.2",
     "@react-navigation/stack": "^6.2.1",
@@ -23,7 +24,8 @@
     "react-dom": "17.0.2",
     "react-native": "0.68.2",
     "react-native-paper": "^4.12.2",
-    "react-native-web": "^0.18.1"
+    "react-native-web": "^0.18.1",
+    "expo-updates": "~0.13.2"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

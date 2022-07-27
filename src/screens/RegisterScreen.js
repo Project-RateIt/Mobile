@@ -1,7 +1,12 @@
 import * as React from "react";
 import { useState } from "react";
 import { SafeAreaView, ScrollView } from "react-native";
-import { Appbar, Button, TextInput } from "react-native-paper";
+import {
+  Appbar,
+  Button,
+  TextInput,
+  ActivityIndicator,
+} from "react-native-paper";
 
 export default function RegisterScreen({ navigation }) {
   const [name, setName] = useState("");
@@ -18,10 +23,10 @@ export default function RegisterScreen({ navigation }) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        Name: name,
-        Surname: surname,
-        Email: email,
-        Password: password,
+        name,
+        surname,
+        email,
+        password,
       }),
     }).then((responce) => {
       responce.json();
@@ -58,9 +63,13 @@ export default function RegisterScreen({ navigation }) {
           value={password}
           onChangeText={setPassword}
         />
-        <Button mode="contained" onPress={register}>
-          Zarejestruj
-        </Button>
+        {loading ? (
+          <ActivityIndicator />
+        ) : (
+          <Button mode="contained" onPress={register}>
+            Zarejestruj
+          </Button>
+        )}
       </ScrollView>
     </SafeAreaView>
   );

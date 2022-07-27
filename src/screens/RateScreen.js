@@ -1,9 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { SafeAreaView, ScrollView, Button } from "react-native";
 import { Appbar, TextInput } from "react-native-paper";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const RateScreen = ({ navigation, route }) => {
   const [rate, setRate] = useState("");
+
+  const [token, setToken] = useState("");
+  const [userId, setUserId] = useState("");
+
+  const getData = () => {
+    try {
+      AsyncStorage.getItem("body").then((value) => {
+        if (value != null) {
+          let body = JSON.parse(value);
+          setToken(body.token);
+          setUserId(body.user.id);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
 
   const rated = () => {
     if (rate < 11) {
@@ -13,15 +35,15 @@ const RateScreen = ({ navigation, route }) => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          token: "6P1OJEMWRU_39781998_28-06-2022 22:03:14",
-          userId: 39781998,
+          token,
+          userId,
           productId: route.params.id,
           rate: rate,
         }),
       }).then((responce) => {
         if (responce.status === 200) {
           alert("Oceniono pomyślnie");
-          navigation.navigate("MyProducts");
+          navigation.navigate("Home");
         } else {
           alert("Spróbuj ponownie");
         }
@@ -38,14 +60,14 @@ const RateScreen = ({ navigation, route }) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        token: "6P1OJEMWRU_39781998_28-06-2022 22:03:14",
-        userId: 39781998,
+        token,
+        userId,
         productId: route.params.id,
       }),
     }).then((responce) => {
       if (responce.status === 200) {
         alert("Usunięto ocenę pomyślnie");
-        navigation.navigate("MyProducts");
+        navigation.navigate("Home");
       } else {
         alert("Spróbuj ponownie");
       }

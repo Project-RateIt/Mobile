@@ -1,22 +1,36 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  FlatList,
-  SafeAreaView,
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-  Image,
-  Pressable,
-} from "react-native";
+import { FlatList, SafeAreaView, Text, StyleSheet } from "react-native";
 import Product from "../components/product/product";
 import { Searchbar } from "react-native-paper";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const MyProducts = ({ navigation }) => {
+const SearchProductsScreen = ({ navigation }) => {
   const [query, setQuery] = useState("");
   const [pageNumber, setPageNumber] = useState(0);
 
   const [product, setProduct] = useState([]);
+
+  const [token, setToken] = useState("");
+  const [userId, setUserId] = useState("");
+
+  const getData = () => {
+    try {
+      AsyncStorage.getItem("body").then((value) => {
+        if (value != null) {
+          let body = JSON.parse(value);
+          setToken(body.token);
+          setUserId(body.user.id);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getData();
+    search();
+  }, []);
 
   const search = () => {
     fetch("http://91.227.2.183:443/products/search", {
@@ -25,16 +39,20 @@ const MyProducts = ({ navigation }) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        token: "6P1OJEMWRU_39781998_28-06-2022 22:03:14",
-        query: query,
+        token,
+        query,
         page: pageNumber,
-        userId: 39781998,
+        userId,
       }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setProduct((previousData) => [...previousData, ...data]);
-      });
+    }).then((response) => {
+      if (response.status === 200) {
+        response.json().then((data) => {
+          setProduct((previousData) => [...previousData, ...data]);
+        });
+      } else {
+        console.warn(response);
+      }
+    });
   };
 
   useEffect(() => {
@@ -57,6 +75,7 @@ const MyProducts = ({ navigation }) => {
         onChangeText={setQuery}
         value={query}
         onIconPress={search}
+        onSubmitEditing={search}
       />
 
       <FlatList
@@ -70,6 +89,7 @@ const MyProducts = ({ navigation }) => {
             navigation={navigation}
           />
         )}
+        contentContainerStyle={{ paddingBottom: 1 }}
         onEndReached={() => setPageNumber((previous) => (previous += 1))}
       />
     </SafeAreaView>
@@ -83,4 +103,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MyProducts;
+export default SearchProductsScreen;

@@ -1,73 +1,36 @@
-import React, { useState } from "react";
-import { SafeAreaView } from "react-native";
-import { Searchbar, Button, Card, Avatar, Paragraph } from "react-native-paper";
+import React, { useState, useEffect } from "react";
+import { SafeAreaView, View, StyleSheet } from "react-native";
+import { Button, Card, Avatar, Paragraph } from "react-native-paper";
 
 const HomeScreen = ({ navigation }) => {
+  const searchProducts = () => navigation.navigate("SearchProducts");
+  const followedProducts = () => navigation.navigate("FollowedProducts");
+  const ratedProducts = () => navigation.navigate("RatedProducts");
   const settings = () => navigation.navigate("Settings");
-  const myProducts = () => navigation.navigate("MyProducts");
-  const lastProducts = () => navigation.navigate("LastProducts");
 
-  const [query, setQuery] = useState("");
-
-  const [product, setProduct] = useState({
-    id: "",
-    name: "",
-    rateSum: 0,
-    rateCount: 0,
-    isFollow: false,
-    isRated: false,
-    myRate: 0,
-    image: "",
-    category: "",
-    ean: "",
-    producer: "",
-  });
-
-  const search = () => {
-    fetch("http://91.227.2.183:443/products/search", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        token: "YP2QCBT5IR_39781998_28-06-2022 14:30:56",
-        query: query,
-        page: 1,
-        userId: 99436860,
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setProduct(data);
-        console.log(product);
-      });
-  };
+  navigation.setOptions({ headerShown: false });
 
   return (
-    <SafeAreaView style={{ paddingTop: 25 }}>
-      <Searchbar
-        placeholder="Search"
-        onChangeText={setQuery}
-        value={query}
-        onIconPress={search}
-      />
+    <SafeAreaView>
       <Card>
         <Card.Actions>
-          <Button onPress={myProducts} mode="contained">
-            Moje produkty
+          <Button onPress={searchProducts} mode="contained">
+            Wyszukaj produkt
           </Button>
         </Card.Actions>
       </Card>
       <Card>
         <Card.Actions>
-          <Button onPress={lastProducts} mode="contained">
-            Ostatnie produkty
+          <Button onPress={followedProducts} mode="contained">
+            Obserwowane produkty
           </Button>
         </Card.Actions>
       </Card>
       <Card>
         <Card.Actions>
-          <Button mode="contained">Najlepsze produkty</Button>
+          <Button onPress={ratedProducts} mode="contained">
+            Ocenione produkty
+          </Button>
         </Card.Actions>
       </Card>
       <Card>
@@ -85,5 +48,7 @@ const HomeScreen = ({ navigation }) => {
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({});
 
 export default HomeScreen;
