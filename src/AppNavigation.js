@@ -11,6 +11,8 @@ import RatedProductsScreen from "./screens/RatedProductsScreen";
 import SettingsScreen from "./screens/SettingsScreen";
 import RateScreen from "./screens/RateScreen";
 import NoteScreen from "./screens/NoteScreen";
+import BarcodeScreen from "./screens/BarcodeScanner";
+import ProductScreen from "./screens/ProductScreen";
 
 const { Navigator, Screen } = createStackNavigator();
 
@@ -31,6 +33,8 @@ const AppNavigation = () => {
         <Screen name="Settings" component={SettingsScreen}></Screen>
         <Screen name="Rate" component={RateScreen}></Screen>
         <Screen name="Note" component={NoteScreen}></Screen>
+        <Screen name="Barcode" component={BarcodeScreen}></Screen>
+        <Screen name="ProductDetails" component={ProductScreen}></Screen>
       </Navigator>
     </NavigationContainer>
   );

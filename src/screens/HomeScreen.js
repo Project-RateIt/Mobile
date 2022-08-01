@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { SafeAreaView, View, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+
 import { Button, Card, Avatar, Paragraph } from "react-native-paper";
 
 const HomeScreen = ({ navigation }) => {
@@ -7,6 +9,7 @@ const HomeScreen = ({ navigation }) => {
   const followedProducts = () => navigation.navigate("FollowedProducts");
   const ratedProducts = () => navigation.navigate("RatedProducts");
   const settings = () => navigation.navigate("Settings");
+  const barcode = () => navigation.navigate("Barcode");
 
   navigation.setOptions({ headerShown: false });
 
@@ -40,7 +43,13 @@ const HomeScreen = ({ navigation }) => {
           </Button>
         </Card.Actions>
       </Card>
-
+      <Card>
+        <Card.Actions>
+          <Button onPress={barcode} mode="contained">
+            Skaner roboczy
+          </Button>
+        </Card.Actions>
+      </Card>
       <Card>
         <Avatar.Image size={64} source={require("../../assets/prof.jpg")} />
         <Paragraph>NAME</Paragraph>

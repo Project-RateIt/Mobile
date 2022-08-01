@@ -55,7 +55,7 @@ const RatedProductsScreen = ({ navigation }) => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text>Obserwowane produkty</Text>
+      <Text>Ocenione produkty</Text>
 
       <FlatList
         data={product}

@@ -25,7 +25,8 @@
     "react-native": "0.68.2",
     "react-native-paper": "^4.12.2",
     "react-native-web": "^0.18.1",
-    "expo-updates": "~0.13.2"
+    "expo-updates": "~0.13.2",
+    "expo-barcode-scanner": "~11.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

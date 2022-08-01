@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FlatList, SafeAreaView, Text, StyleSheet } from "react-native";
+import { FlatList, Text, View } from "react-native";
 import Product from "../components/product/product";
 import { Searchbar } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -12,6 +12,8 @@ const SearchProductsScreen = ({ navigation }) => {
 
   const [token, setToken] = useState("");
   const [userId, setUserId] = useState("");
+
+  const productDetails = () => navigation.navigate("ProductDetails");
 
   const getData = () => {
     try {
@@ -64,12 +66,13 @@ const SearchProductsScreen = ({ navigation }) => {
   }, [query]);
 
   const pressHandler = (item) => {
+    onPress = { productDetails };
     console.log(item.id);
+    console.log(item);
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text>MyProducts</Text>
+    <View>
       <Searchbar
         placeholder="Search"
         onChangeText={setQuery}
@@ -89,18 +92,10 @@ const SearchProductsScreen = ({ navigation }) => {
             navigation={navigation}
           />
         )}
-        contentContainerStyle={{ paddingBottom: 1 }}
         onEndReached={() => setPageNumber((previous) => (previous += 1))}
       />
-    </SafeAreaView>
+    </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    paddingTop: 25,
-  },
-});
 
 export default SearchProductsScreen;

@@ -4,8 +4,10 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Product = ({ item, pressHandler, navigation, id }) => {
   const [followed, setFollowed] = useState(false);
+  const [rating, setRating] = useState();
   const rate = () => navigation.navigate("Rate", { id: id });
   const note = () => navigation.navigate("Note", { id: id });
+  const productDetails = () => navigation.navigate("ProductDetails");
 
   const [token, setToken] = useState("");
   const [userId, setUserId] = useState("");
@@ -26,6 +28,11 @@ const Product = ({ item, pressHandler, navigation, id }) => {
 
   useEffect(() => {
     getData();
+    if (item.rateSum === 0 || item.rateCount === 0) {
+      setRating("Brak ocen");
+    } else {
+      setRating("Ocena " + item.rateSum / item.rateCount + "/10");
+    }
   }, []);
 
   const follow = () => {
@@ -79,9 +86,7 @@ const Product = ({ item, pressHandler, navigation, id }) => {
         <View style={styles.info}>
           <Text style={styles.text}>{item.name}</Text>
           <Text style={styles.text}>{item.producer}</Text>
-          <Text style={styles.text}>
-            Ocena {item.rateSum / item.rateCount}/10
-          </Text>
+          <Text style={styles.text}>{rating}</Text>
         </View>
       </Pressable>
       <View style={styles.action}>
