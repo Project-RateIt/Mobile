@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Alert, SafeAreaView, ScrollView } from "react-native";
 import { Appbar, Button, TextInput } from "react-native-paper";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function RegisterScreen({ navigation }) {
   const [token, setToken] = useState("");

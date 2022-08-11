@@ -1,87 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Image, Pressable, Button } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const Product = ({ item, pressHandler, navigation, id }) => {
-  const [followed, setFollowed] = useState(false);
+const Product = ({ item, navigation, id }) => {
   const [rating, setRating] = useState();
   const rate = () => navigation.navigate("Rate", { id: id });
   const note = () => navigation.navigate("Note", { id: id });
-  const productDetails = () => navigation.navigate("ProductDetails");
+  const productDetails = () =>
+    navigation.navigate("ProductDetails", { item: item });
 
-  const [token, setToken] = useState("");
-  const [userId, setUserId] = useState("");
-
-  const getData = () => {
-    try {
-      AsyncStorage.getItem("body").then((value) => {
-        if (value != null) {
-          let body = JSON.parse(value);
-          setToken(body.token);
-          setUserId(body.user.id);
-        }
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
+  let avgRate = Math.round(item.rateSum / item.rateCount);
   useEffect(() => {
-    getData();
     if (item.rateSum === 0 || item.rateCount === 0) {
       setRating("Brak ocen");
     } else {
-      setRating("Ocena " + item.rateSum / item.rateCount + "/10");
+      setRating("Ocena " + avgRate + "/10");
     }
   }, []);
 
-  const follow = () => {
-    if (followed == false) {
-      fetch("http://91.227.2.183:443/products/follow", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          token,
-          userId,
-          productId: id,
-        }),
-      }).then((responce) => {
-        if (responce.status === 200) {
-          alert("Obserwujesz");
-        } else {
-          alert("Spróbuj ponownie");
-        }
-      });
-      setFollowed((isFollowed) => !isFollowed);
-      console.log(followed);
-    } else {
-      fetch("http://91.227.2.183:443/products/unfollow", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          token,
-          userId,
-          productId: id,
-        }),
-      }).then((responce) => {
-        if (responce.status === 200) {
-          alert("Nie obserwujesz");
-        } else {
-          alert("Spróbuj ponownie");
-        }
-      });
-      setFollowed((isFollowed) => !isFollowed);
-      console.log(followed);
-    }
-  };
-
   return (
     <View style={styles.listItem}>
-      <Pressable style={styles.container} onPress={() => pressHandler(item)}>
+      <Pressable style={styles.container} onPress={productDetails}>
         <Image style={styles.image} source={{ uri: item.image }} />
         <View style={styles.info}>
           <Text style={styles.text}>{item.name}</Text>
@@ -90,7 +28,6 @@ const Product = ({ item, pressHandler, navigation, id }) => {
         </View>
       </Pressable>
       <View style={styles.action}>
-        <Button title={followed ? "followed" : "follow"} onPress={follow} />
         <Button title="Oceń" onPress={rate} />
         <Button title="Notatka" onPress={note} />
       </View>
@@ -122,7 +59,7 @@ const styles = StyleSheet.create({
   action: {
     backgroundColor: "green",
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "space-evenly",
     alignItems: "center",
   },
 });

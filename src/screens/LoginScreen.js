@@ -21,6 +21,9 @@ export default function LoginScreen({ navigation }) {
       AsyncStorage.getItem("UserData").then((value) => {
         if (value != "null") {
           navigation.navigate("Home");
+          // , {
+          //   admin: JSON.parse(value).user.isAdmin,
+          // }
         }
       });
     } catch (error) {
@@ -51,6 +54,7 @@ export default function LoginScreen({ navigation }) {
           await AsyncStorage.setItem("body", JSON.stringify(result));
           alert("Logowanie powiodło się");
           navigation.navigate("Home");
+          // , { admin: result.user.isAdmin }
         } else {
           alert("Błędne dane logowania");
         }

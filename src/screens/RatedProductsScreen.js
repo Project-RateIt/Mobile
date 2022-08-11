@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FlatList, SafeAreaView, Text, StyleSheet } from "react-native";
+import { FlatList, View, Text, StyleSheet } from "react-native";
 import Product from "../components/product/product";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -54,7 +54,7 @@ const RatedProductsScreen = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <Text>Ocenione produkty</Text>
 
       <FlatList
@@ -70,14 +70,13 @@ const RatedProductsScreen = ({ navigation }) => {
         )}
         contentContainerStyle={{ paddingBottom: 19 }}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    paddingTop: 25,
   },
 });
 

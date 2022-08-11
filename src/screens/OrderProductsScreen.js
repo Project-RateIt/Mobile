@@ -1,11 +1,10 @@
+import { StyleSheet, Text, View, FlatList } from "react-native";
 import React, { useState, useEffect } from "react";
-import { FlatList, SafeAreaView, Text, StyleSheet } from "react-native";
 import Product from "../components/product/product";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const FollowedProductsScreen = ({ navigation }) => {
+const OrderProductsScreen = ({ navigation }) => {
   const [product, setProduct] = useState([]);
-
   const [token, setToken] = useState("");
   const [userId, setUserId] = useState("");
 
@@ -27,7 +26,7 @@ const FollowedProductsScreen = ({ navigation }) => {
     getData();
   }, []);
 
-  fetch("http://91.227.2.183:443/products/getFollowedProduct", {
+  fetch("http://91.227.2.183:443/admin/getOrderProduct", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -42,42 +41,27 @@ const FollowedProductsScreen = ({ navigation }) => {
         setProduct(data);
       });
     } else {
+      console.log("-------------------------err-------------");
       console.log(response.status);
       console.log(token);
       console.log(userId);
     }
   });
 
-  const pressHandler = (item) => {
-    console.log(item.id);
-  };
-
   return (
-    <SafeAreaView style={styles.container}>
-      <Text>Obserwowane produkty</Text>
-
+    <View>
+      <Text>OrderProductsScreen</Text>
       <FlatList
         data={product}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <Product
-            id={item.id}
-            item={item}
-            pressHandler={pressHandler}
-            navigation={navigation}
-          />
+          <Product id={item.id} item={item} navigation={navigation} />
         )}
-        contentContainerStyle={{ paddingBottom: 19 }}
       />
-    </SafeAreaView>
+    </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    paddingTop: 25,
-  },
-});
+export default OrderProductsScreen;
 
-export default FollowedProductsScreen;
+const styles = StyleSheet.create({});

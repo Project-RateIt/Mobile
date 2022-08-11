@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-
 import { Button, Card, Avatar, Paragraph } from "react-native-paper";
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = ({ navigation, route }) => {
   const searchProducts = () => navigation.navigate("SearchProducts");
-  const followedProducts = () => navigation.navigate("FollowedProducts");
   const ratedProducts = () => navigation.navigate("RatedProducts");
   const settings = () => navigation.navigate("Settings");
   const barcode = () => navigation.navigate("Barcode");
+  const ranking = () => navigation.navigate("Ranking");
+  const admin = () => navigation.navigate("Admin");
 
   navigation.setOptions({ headerShown: false });
 
@@ -19,13 +19,6 @@ const HomeScreen = ({ navigation }) => {
         <Card.Actions>
           <Button onPress={searchProducts} mode="contained">
             Wyszukaj produkt
-          </Button>
-        </Card.Actions>
-      </Card>
-      <Card>
-        <Card.Actions>
-          <Button onPress={followedProducts} mode="contained">
-            Obserwowane produkty
           </Button>
         </Card.Actions>
       </Card>
@@ -50,6 +43,22 @@ const HomeScreen = ({ navigation }) => {
           </Button>
         </Card.Actions>
       </Card>
+      <Card>
+        <Card.Actions>
+          <Button onPress={ranking} mode="contained">
+            Ranking
+          </Button>
+        </Card.Actions>
+      </Card>
+      {/* {route.params.admin && (
+        <Card>
+          <Card.Actions>
+            <Button onPress={admin} mode="contained">
+              admin
+            </Button>
+          </Card.Actions>
+        </Card>
+      )} */}
       <Card>
         <Avatar.Image size={64} source={require("../../assets/prof.jpg")} />
         <Paragraph>NAME</Paragraph>

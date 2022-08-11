@@ -1,12 +1,31 @@
 import React, { useState, useEffect } from "react";
 import { Text, View, StyleSheet, Alert, Button } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function BarcodeScanner({ navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
+  const [token, setToken] = useState("");
+  const [userId, setUserId] = useState("");
 
-  const productDetails = () => navigation.navigate("ProductDetails");
+  const getData = () => {
+    try {
+      AsyncStorage.getItem("body").then((value) => {
+        if (value != null) {
+          let body = JSON.parse(value);
+          setToken(body.token);
+          setUserId(body.user.id);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -18,15 +37,48 @@ export default function BarcodeScanner({ navigation }) {
   const handleBarCodeScanned = ({ type, data }) => {
     setScanned(true);
     console.log(data);
-    // alert(`Bar code with type ${type} and data ${data} has been scanned!`);
-    Alert.alert("Pomyślnie zeskanowano", "nazwa produktu", [
-      {
-        text: "Ponownie",
-        onPress: () => setScanned(false),
-        style: "cancel",
+    fetch("http://91.227.2.183:443/products/checkProduct", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-      { text: "Dalej", onPress: productDetails },
-    ]);
+      body: JSON.stringify({
+        token: token,
+        ean: data.toString(),
+        userId: userId,
+      }),
+    }).then(async (responce) => {
+      const parsedResopnse = await responce.json();
+
+      if (responce.status === 200) {
+        Alert.alert("Pomyślnie zeskanowano", "TODO: nazwa produktu", [
+          {
+            text: "Ponownie",
+            onPress: () => setScanned(false),
+          },
+          {
+            text: "Dalej",
+            onPress: () =>
+              navigation.navigate("ProductDetails", {
+                item: parsedResopnse,
+              }),
+          },
+        ]);
+      }
+      if (responce.status === 409) {
+        Alert.alert(
+          "Niestety nie mamy takiego produktu",
+          "TODO: addProductScreen",
+          [
+            {
+              text: "Ponownie",
+              onPress: () => setScanned(false),
+            },
+            { text: "dodaj", onPress: console.log("dodaj") },
+          ]
+        );
+      }
+    });
   };
 
   if (hasPermission === null) {
@@ -42,15 +94,6 @@ export default function BarcodeScanner({ navigation }) {
         onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
         style={StyleSheet.absoluteFillObject}
       />
-      {/* {scanned && (
-        <View>
-          <Button
-            title={"Tap to Scan Again"}
-            onPress={() => setScanned(false)}
-          />
-          <Button title={"Tap to Scan Again"} onPress={productDetails} />
-        </View>
-      )} */}
     </View>
   );
 }

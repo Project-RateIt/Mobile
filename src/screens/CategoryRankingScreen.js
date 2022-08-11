@@ -1,17 +1,13 @@
+import { StyleSheet, Text, View, FlatList } from "react-native";
 import React, { useState, useEffect } from "react";
-import { FlatList, Text, View } from "react-native";
 import Product from "../components/product/product";
-import { Searchbar } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const SearchProductsScreen = ({ navigation }) => {
-  const [query, setQuery] = useState("");
-  const [pageNumber, setPageNumber] = useState(0);
-
+const CategoryRankingScreen = ({ navigation, route }) => {
   const [product, setProduct] = useState([]);
-
   const [token, setToken] = useState("");
   const [userId, setUserId] = useState("");
+  const [pageNumber, setPageNumber] = useState(0);
 
   const getData = () => {
     try {
@@ -29,19 +25,20 @@ const SearchProductsScreen = ({ navigation }) => {
 
   useEffect(() => {
     getData();
-  }, []);
+    token !== "" && userId !== "" && getRanking();
+  }, [token, userId]);
 
-  const search = () => {
-    fetch("http://91.227.2.183:443/products/search", {
+  const getRanking = () => {
+    fetch("http://91.227.2.183:443/products/getCategoryRanking", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        token,
-        query,
+        token: token,
+        userId: userId,
         page: pageNumber,
-        userId,
+        categoryId: route.params.item.id,
       }),
     }).then((response) => {
       if (response.status === 200) {
@@ -49,29 +46,22 @@ const SearchProductsScreen = ({ navigation }) => {
           setProduct((previousData) => [...previousData, ...data]);
         });
       } else {
-        console.warn(response);
+        console.log("-------------------------err-------------");
+        console.log(token);
+        console.log(userId);
+        console.log(pageNumber);
+        console.log(route.params.item.id);
       }
     });
   };
 
   useEffect(() => {
-    search();
-  }, [pageNumber, query]);
-
-  useEffect(() => {
-    setProduct([]);
-  }, [query]);
+    getRanking();
+  }, [pageNumber]);
 
   return (
     <View>
-      <Searchbar
-        placeholder="Search"
-        onChangeText={setQuery}
-        value={query}
-        onIconPress={search}
-        onSubmitEditing={search}
-      />
-
+      <Text>CategoryRankingScreen</Text>
       <FlatList
         data={product}
         keyExtractor={(item) => item.id}
@@ -84,4 +74,6 @@ const SearchProductsScreen = ({ navigation }) => {
   );
 };
 
-export default SearchProductsScreen;
+export default CategoryRankingScreen;
+
+const styles = StyleSheet.create({});
