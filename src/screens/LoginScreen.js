@@ -19,11 +19,9 @@ export default function LoginScreen({ navigation }) {
   const getData = () => {
     try {
       AsyncStorage.getItem("UserData").then((value) => {
+        console.log(value);
         if (value != "null") {
           navigation.navigate("Home");
-          // , {
-          //   admin: JSON.parse(value).user.isAdmin,
-          // }
         }
       });
     } catch (error) {
@@ -52,9 +50,9 @@ export default function LoginScreen({ navigation }) {
         if (responce.status === 200) {
           const result = await responce.json();
           await AsyncStorage.setItem("body", JSON.stringify(result));
+
           alert("Logowanie powiodło się");
           navigation.navigate("Home");
-          // , { admin: result.user.isAdmin }
         } else {
           alert("Błędne dane logowania");
         }

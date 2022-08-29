@@ -28,28 +28,28 @@ const Settings = () => {
     getData();
   }, []);
 
-  // const resetEmail = () => {
-  //   fetch("http://91.227.2.183:443/user/settings", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({
-  //       token: "token",
-  //       userId: 40891190,
-  //       mode: 2,
-  //       value: newEmail,
-  //     }),
-  //   }).then((response) => {
-  //     if (response.status === 200) {
-  //       alert("Pomyślnie zmieniono avatar");
-  //     } else {
-  //       console.log("-------------------------err-------------");
-  //       console.log(token);
-  //       console.log(userId);
-  //     }
-  //   });
-  // };
+  const resetEmail = () => {
+    fetch("http://91.227.2.183:443/user/settings", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        token: "token",
+        userId: 40891190,
+        mode: 2,
+        value: newEmail,
+      }),
+    }).then((response) => {
+      if (response.status === 200) {
+        alert("Pomyślnie zmieniono avatar");
+      } else {
+        console.log("-------------------------err-------------");
+        console.log(token);
+        console.log(userId);
+      }
+    });
+  };
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -59,7 +59,7 @@ const Settings = () => {
       width: 200,
       height: 200,
       aspect: [4, 3],
-      quality: 1,
+      quality: 0.5,
       base64: true,
     });
 
@@ -73,8 +73,8 @@ const Settings = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          token: "token",
-          userId: 40891190,
+          token: token,
+          id: userId,
           mode: 3,
           value: result.base64.toString(),
         }),
@@ -94,13 +94,13 @@ const Settings = () => {
   return (
     <View>
       <Text>Settings</Text>
-      {/* <TextInput
+      <TextInput
         label="Email"
         keybordType="email-address"
         onChangeText={(value) => setNewEmail(value)}
       />
-      <Button title="zmień email" onPress={resetEmail} /> */}
-      {/* <Button title="zmień avatar" onPress={pickImage} /> */}
+      <Button title="zmień email" onPress={resetEmail} />
+      <Button title="zmień avatar" onPress={pickImage} />
     </View>
   );
 };

@@ -29,7 +29,8 @@ const SearchProductsScreen = ({ navigation }) => {
 
   useEffect(() => {
     getData();
-  }, []);
+    token !== "" && userId !== "" && search();
+  }, [token, userId]);
 
   const search = () => {
     fetch("http://91.227.2.183:443/products/search", {
