@@ -59,7 +59,7 @@ const HomeScreen = ({ navigation }) => {
       <Card>
         <Card.Actions>
           <Button onPress={ratedProducts} mode="contained">
-            Ocenione produkty
+            Oceny
           </Button>
         </Card.Actions>
       </Card>
@@ -73,7 +73,7 @@ const HomeScreen = ({ navigation }) => {
       <Card>
         <Card.Actions>
           <Button onPress={barcode} mode="contained">
-            Skaner roboczy
+            Skanuj
           </Button>
         </Card.Actions>
       </Card>

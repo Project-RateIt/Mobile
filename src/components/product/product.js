@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, StyleSheet, Image, Pressable, Button } from "react-native";
+import { BottomSheet } from "react-native-btr";
+import { Entypo } from "@expo/vector-icons";
 
 const Product = ({ item, navigation, id }) => {
   const [rating, setRating] = useState();
@@ -7,6 +9,13 @@ const Product = ({ item, navigation, id }) => {
   const note = () => navigation.navigate("Note", { id: id });
   const productDetails = () =>
     navigation.navigate("ProductDetails", { item: item });
+
+  const [visible, setVisible] = useState(false);
+
+  const toggleBottomNavigationView = () => {
+    //Toggling the visibility state of the bottom sheet
+    setVisible(!visible);
+  };
 
   let avgRate = Math.round(item.rateSum / item.rateCount);
   useEffect(() => {
@@ -22,44 +31,85 @@ const Product = ({ item, navigation, id }) => {
       <Pressable style={styles.container} onPress={productDetails}>
         <Image style={styles.image} source={{ uri: item.image }} />
         <View style={styles.info}>
-          <Text style={styles.text}>{item.name}</Text>
-          <Text style={styles.text}>{item.producer}</Text>
-          <Text style={styles.text}>{rating}</Text>
+          <View style={styles.text}>
+            <Text style={styles.a}>{item.name}</Text>
+            <Text style={styles.a}>{rating}</Text>
+          </View>
+          <Pressable style={styles.dots} onPress={toggleBottomNavigationView}>
+            <Entypo name="dots-three-vertical" size={24} color="black" />
+          </Pressable>
         </View>
       </Pressable>
-      <View style={styles.action}>
-        <Button title="Oceń" onPress={rate} />
-        <Button title="Notatka" onPress={note} />
-      </View>
+      <BottomSheet
+        visible={visible}
+        onBackButtonPress={toggleBottomNavigationView}
+        onBackdropPress={toggleBottomNavigationView}
+      >
+        <View style={styles.bottomNavigationView}>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "column",
+              justifyContent: "space-between",
+            }}
+          >
+            <View style={{ flex: 1 }}>
+              <Button
+                style={{ flex: 1 }}
+                title="Więcej szczegółów"
+                onPress={productDetails}
+              />
+              <Button style={{ flex: 1 }} title="Oceń" onPress={rate} />
+              <Button style={{ flex: 1 }} title="Notatka" onPress={note} />
+              <Button
+                style={{ flex: 1 }}
+                title="Anuluj"
+                onPress={() => setVisible(false)}
+              />
+            </View>
+          </View>
+        </View>
+      </BottomSheet>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   listItem: {
-    borderWidth: 1,
-    flexDirection: "row",
+    margin: 1,
+    flex: 1,
   },
   container: {
-    backgroundColor: "red",
-    flexDirection: "row",
-    flex: 2,
+    flex: 1,
   },
   image: {
+    resizeMode: "contain",
     flex: 1,
-    width: 64,
-    height: 100,
+    aspectRatio: 1,
+  },
+  text: {
+    flex: 9,
+  },
+  dots: {
+    flex: 2,
   },
   info: {
     flex: 1,
+    flexDirection: "row",
     justifyContent: "center",
     alignItems: "center",
   },
-  text: {},
   action: {
     backgroundColor: "green",
     flex: 1,
     justifyContent: "space-evenly",
+    alignItems: "center",
+  },
+  bottomNavigationView: {
+    backgroundColor: "#fff",
+    width: "100%",
+    height: 250,
+    justifyContent: "center",
     alignItems: "center",
   },
 });

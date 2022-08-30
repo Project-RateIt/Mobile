@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { Alert, SafeAreaView, ScrollView } from "react-native";
+import React, { useState, useEffect, useLayoutEffect } from "react";
+import { Alert, ScrollView } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Appbar, Button, TextInput } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -7,6 +8,12 @@ export default function RegisterScreen({ navigation }) {
   const [token, setToken] = useState("");
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerShown: false,
+    });
+  }, []);
 
   const getData = () => {
     try {

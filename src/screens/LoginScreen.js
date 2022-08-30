@@ -1,6 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import { Alert, SafeAreaView, View, StyleSheet } from "react-native";
+import { Alert, SafeAreaView, View, StyleSheet, Text } from "react-native";
 import { Card, Button, TextInput, ActivityIndicator } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -11,6 +11,7 @@ export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [passwordVisible, setPasswordVisible] = useState(true);
 
   useEffect(() => {
     getData();
@@ -77,7 +78,13 @@ export default function LoginScreen({ navigation }) {
             />
             <TextInput
               label="Haslo"
-              secureTextEntry={true}
+              secureTextEntry={passwordVisible}
+              right={
+                <TextInput.Icon
+                  name={passwordVisible ? "eye" : "eye-off"}
+                  onPress={() => setPasswordVisible(!passwordVisible)}
+                />
+              }
               onChangeText={(value) => setPassword(value)}
             />
             <Button style={styles.buttons} uppercase={false} onPress={reset}>

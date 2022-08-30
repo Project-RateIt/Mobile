@@ -61,7 +61,6 @@ const CategoryRankingScreen = ({ navigation, route }) => {
 
   return (
     <View>
-      <Text>CategoryRankingScreen</Text>
       <FlatList
         data={product}
         keyExtractor={(item) => item.id}

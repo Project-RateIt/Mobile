@@ -21,7 +21,10 @@ const { Navigator, Screen } = createStackNavigator();
 const AppNavigation = () => {
   return (
     <NavigationContainer>
-      <Navigator initialRouteName="Login">
+      <Navigator
+        initialRouteName="Login"
+        screenOptions={{ headerShown: false }}
+      >
         <Screen name="Login" component={LoginScreen}></Screen>
         <Screen name="Register" component={RegisterScreen}></Screen>
         <Screen name="Reset" component={ResetPasswordScreen}></Screen>

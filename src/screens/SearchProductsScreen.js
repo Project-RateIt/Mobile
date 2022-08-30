@@ -74,6 +74,8 @@ const SearchProductsScreen = ({ navigation }) => {
       />
 
       <FlatList
+        initialNumToRender={6}
+        numColumns={2}
         data={product}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
