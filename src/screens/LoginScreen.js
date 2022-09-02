@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useLayoutEffect } from "react";
 import { useState, useEffect } from "react";
-import { Alert, SafeAreaView, View, StyleSheet, Text } from "react-native";
-import { Card, Button, TextInput, ActivityIndicator } from "react-native-paper";
+import { Alert, View, StyleSheet, Button, Pressable, Text } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Card, TextInput, ActivityIndicator } from "react-native-paper";
+import { LinearGradient } from "expo-linear-gradient";
 
 export default function LoginScreen({ navigation }) {
   const register = () => navigation.navigate("Register");
@@ -12,6 +14,13 @@ export default function LoginScreen({ navigation }) {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(true);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerShown: true,
+      headerTitle: "Zaloguj",
+    });
+  }, []);
 
   useEffect(() => {
     getData();
@@ -68,40 +77,70 @@ export default function LoginScreen({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.view}>
-        <Card>
-          <Card.Title title="RateIt"></Card.Title>
-          <Card.Content>
-            <TextInput
-              label="Email"
-              keybordType="email-address"
-              onChangeText={(value) => setEmail(value)}
+        <TextInput
+          autoCapitalize="none"
+          activeUnderlineColor="#b0b4be"
+          underlineColor="transparent"
+          style={{ marginBottom: 10 }}
+          label="Email"
+          keybordType="email-address"
+          onChangeText={(value) => setEmail(value)}
+          left={<TextInput.Icon name="email" color="#62687a" />}
+        />
+        <TextInput
+          autoCapitalize="none"
+          activeUnderlineColor="#b0b4be"
+          underlineColor="transparent"
+          style={{ marginBottom: 5 }}
+          label="Haslo"
+          secureTextEntry={passwordVisible}
+          left={<TextInput.Icon name="lock" color="#62687a" />}
+          right={
+            <TextInput.Icon
+              name={passwordVisible ? "eye" : "eye-off"}
+              color="#b0b4be"
+              onPress={() => setPasswordVisible(!passwordVisible)}
             />
-            <TextInput
-              label="Haslo"
-              secureTextEntry={passwordVisible}
-              right={
-                <TextInput.Icon
-                  name={passwordVisible ? "eye" : "eye-off"}
-                  onPress={() => setPasswordVisible(!passwordVisible)}
-                />
-              }
-              onChangeText={(value) => setPassword(value)}
-            />
-            <Button style={styles.buttons} uppercase={false} onPress={reset}>
-              Zapomniałes hasła
-            </Button>
-            {loading ? (
-              <ActivityIndicator />
-            ) : (
-              <Button style={styles.buttons} mode="contained" onPress={login}>
-                Zaloguj
-              </Button>
-            )}
-            <Button style={styles.buttons} onPress={register}>
-              Zarejestruj
-            </Button>
-          </Card.Content>
-        </Card>
+          }
+          onChangeText={(value) => setPassword(value)}
+        />
+        <Pressable
+          style={{
+            flexDirection: "row",
+            justifyContent: "flex-end",
+            marginBottom: 10,
+          }}
+          onPress={reset}
+        >
+          <Text style={{ color: "#162c4a" }}>Zapomniałeś hasła</Text>
+        </Pressable>
+
+        {loading ? (
+          <ActivityIndicator />
+        ) : (
+          <LinearGradient
+            start={{ x: 0.7, y: 0 }}
+            onPress={login}
+            colors={["#ffc400", "#ff8800"]}
+            style={styles.login}
+          >
+            <Text style={styles.text}>Zaloguj</Text>
+          </LinearGradient>
+        )}
+        <LinearGradient
+          colors={["#4c669f", "#3b5998", "#192f6a"]}
+          style={styles.facebook}
+        >
+          <Text style={styles.text}>Zaloguj z Facebook</Text>
+        </LinearGradient>
+        <LinearGradient
+          start={{ x: 0.7, y: 0 }}
+          onPress={register}
+          colors={["#ffff84", "#ffe501", "#fecd01", "#ffac00"]}
+          style={styles.login}
+        >
+          <Text style={styles.text}>Zarejestruj</Text>
+        </LinearGradient>
       </View>
     </SafeAreaView>
   );
@@ -113,14 +152,26 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    flexDirection: "row",
-    backgroundColor: "#03142E",
+    backgroundColor: "#ffffff",
   },
   view: {
-    width: "80%",
+    width: "90%",
   },
-  buttons: {
-    margin: 2,
-    marginHorizontal: 0,
+  login: {
+    padding: 10,
+    alignItems: "center",
+    borderRadius: 5,
+    marginVertical: 5,
+  },
+  facebook: {
+    padding: 15,
+    alignItems: "center",
+    borderRadius: 5,
+    marginVertical: 5,
+  },
+  text: {
+    backgroundColor: "transparent",
+    fontSize: 16,
+    color: "#fff",
   },
 });

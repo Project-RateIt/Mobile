@@ -29,7 +29,8 @@
     "react-native-btr": "^2.2.0",
     "react-native-image-base64": "^0.1.4",
     "react-native-paper": "^4.12.2",
-    "react-native-web": "^0.18.1"
+    "react-native-web": "^0.18.1",
+    "expo-linear-gradient": "~11.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"
