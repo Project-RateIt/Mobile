@@ -1,13 +1,15 @@
 import { StyleSheet, Text, View, FlatList, Pressable } from "react-native";
 import React, { useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import Category from "../components/ranking/category";
+import Product from "../components/product/product";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
 
-const RankingScreen = ({ navigation }) => {
+const SubcategoryRankingScreen = ({ navigation, route }) => {
   const [category, setCategory] = useState([]);
   const [token, setToken] = useState("");
   const [userId, setUserId] = useState("");
+  const [pageNumber, setPageNumber] = useState(0);
 
   const getData = () => {
     try {
@@ -25,14 +27,15 @@ const RankingScreen = ({ navigation }) => {
 
   useEffect(() => {
     getData();
-    token !== "" && userId !== "" && getCategories();
+    token !== "" && userId !== "" && getRanking();
   }, [token, userId]);
 
-  const getCategories = () => {
-    console.log("token");
-    console.log(token);
-    console.log(userId);
-    fetch("http://91.227.2.183:443/products/getCategories", {
+  useEffect(() => {
+    getRanking();
+  }, [pageNumber]);
+
+  const getRanking = () => {
+    fetch("http://91.227.2.183:443/products/getCategoryRanking", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -40,14 +43,15 @@ const RankingScreen = ({ navigation }) => {
       body: JSON.stringify({
         token: token,
         userId: userId,
+        categoryId: route.params.item.id,
+        page: pageNumber,
       }),
-    }).then((responce) => {
-      if (responce.status === 200) {
-        responce.json().then((data) => {
+    }).then((response) => {
+      if (response.status === 200) {
+        response.json().then((data) => {
           setCategory((previousData) => [...previousData, ...data]);
         });
       } else {
-        console.log(error);
       }
     });
   };
@@ -55,18 +59,24 @@ const RankingScreen = ({ navigation }) => {
   return (
     <SafeAreaView>
       <FlatList
-        horizontal={false}
-        numColumns={3}
+        columnWrapperStyle={styles.row}
+        numColumns={2}
         data={category}
-        keyExtractor={(id) => id}
+        keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <Category id={item.id} item={item} navigation={navigation} />
+          <Product id={item.id} item={item} navigation={navigation} />
         )}
+        onEndReached={() => setPageNumber((previous) => (previous += 1))}
       />
     </SafeAreaView>
   );
 };
 
-export default RankingScreen;
+export default SubcategoryRankingScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  row: {
+    flex: 1,
+    justifyContent: "space-around",
+  },
+});

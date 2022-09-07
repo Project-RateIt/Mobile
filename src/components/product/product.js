@@ -1,7 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Image, Pressable, Button } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  Pressable,
+  Button,
+  TouchableWithoutFeedback,
+  TouchableOpacity,
+} from "react-native";
 import { BottomSheet } from "react-native-btr";
 import { Entypo } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 
 const Product = ({ item, navigation, id }) => {
   const [rating, setRating] = useState();
@@ -13,7 +23,6 @@ const Product = ({ item, navigation, id }) => {
   const [visible, setVisible] = useState(false);
 
   const toggleBottomNavigationView = () => {
-    //Toggling the visibility state of the bottom sheet
     setVisible(!visible);
   };
 
@@ -27,33 +36,47 @@ const Product = ({ item, navigation, id }) => {
   }, []);
 
   return (
-    <View style={styles.listItem}>
-      <Pressable style={styles.container} onPress={productDetails}>
-        <Image style={styles.image} source={{ uri: item.image }} />
-        <View style={styles.info}>
-          <View style={styles.text}>
-            <Text style={styles.a}>{item.name}</Text>
-            <Text style={styles.a}>{rating}</Text>
+    <LinearGradient
+      colors={["#009245", "#8cc631"]}
+      start={{ x: 0, y: 1 }}
+      end={{ x: 1, y: 0 }}
+      style={styles.item}
+    >
+      <TouchableOpacity onPress={productDetails}>
+        <View>
+          <View style={styles.image_container}>
+            <Image style={styles.image} source={{ uri: item.image }} />
           </View>
-          <Pressable style={styles.dots} onPress={toggleBottomNavigationView}>
-            <Entypo name="dots-three-vertical" size={24} color="black" />
-          </Pressable>
+          <Text numberOfLines={1} style={styles.name}>
+            {item.name}
+          </Text>
+          <Text numberOfLines={1} style={styles.rating}>
+            {item.producer}
+          </Text>
+          <View style={styles.price_container}>
+            <View style={styles.price}>
+              <Text style={styles.textPrice}>{rating}</Text>
+            </View>
+            <TouchableOpacity
+              onPress={toggleBottomNavigationView}
+              style={styles.button}
+            >
+              <Entypo name="dots-three-vertical" size={15} color="black" />
+            </TouchableOpacity>
+          </View>
         </View>
-      </Pressable>
-      <BottomSheet
-        visible={visible}
-        onBackButtonPress={toggleBottomNavigationView}
-        onBackdropPress={toggleBottomNavigationView}
-      >
-        <View style={styles.bottomNavigationView}>
-          <View
-            style={{
-              flex: 1,
-              flexDirection: "column",
-              justifyContent: "space-between",
-            }}
-          >
-            <View style={{ flex: 1 }}>
+        <BottomSheet
+          visible={visible}
+          onBackButtonPress={toggleBottomNavigationView}
+          onBackdropPress={toggleBottomNavigationView}
+        >
+          <View style={styles.bottomNavigationView}>
+            <View
+              style={{
+                flex: 1,
+                alignContent: "space-between",
+              }}
+            >
               <Button
                 style={{ flex: 1 }}
                 title="Więcej szczegółów"
@@ -68,42 +91,65 @@ const Product = ({ item, navigation, id }) => {
               />
             </View>
           </View>
-        </View>
-      </BottomSheet>
-    </View>
+        </BottomSheet>
+      </TouchableOpacity>
+    </LinearGradient>
   );
 };
 
 const styles = StyleSheet.create({
-  listItem: {
-    margin: 1,
+  item: {
+    margin: 5,
     flex: 1,
+    borderRadius: 10,
   },
-  container: {
-    flex: 1,
+  image_container: {
+    width: 90,
+    height: 90,
   },
   image: {
-    resizeMode: "contain",
+    width: "100%",
+    height: "100%",
+    borderRadius: 10,
+  },
+  content: {
     flex: 1,
-    aspectRatio: 1,
+    justifyContent: "center",
+    paddingHorizontal: 10,
   },
-  text: {
-    flex: 9,
+  name: {
+    color: "white",
+    fontSize: 14,
   },
-  dots: {
-    flex: 2,
-  },
-  info: {
-    flex: 1,
+  rating: {
+    marginTop: 5,
     flexDirection: "row",
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  button: {
+    width: 30,
+    height: 30,
+    backgroundColor: "white",
+    borderRadius: 15,
     justifyContent: "center",
     alignItems: "center",
   },
-  action: {
-    backgroundColor: "green",
-    flex: 1,
-    justifyContent: "space-evenly",
-    alignItems: "center",
+  price_container: {
+    alignItems: "flex-end",
+    flexDirection: "row",
+    marginTop: 10,
+  },
+  price: {
+    backgroundColor: "white",
+    paddingVertical: 5,
+    paddingHorizontal: 15,
+    borderRadius: 50,
+  },
+  textPrice: {
+    color: "green",
+    fontWeight: "bold",
   },
   bottomNavigationView: {
     backgroundColor: "#fff",

@@ -1,10 +1,22 @@
-import React, { useLayoutEffect } from "react";
-import { useState, useEffect } from "react";
-import { Alert, View, StyleSheet, Button, Pressable, Text } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Card, TextInput, ActivityIndicator } from "react-native-paper";
+import React, { useState, useEffect } from "react";
+import {
+  Text,
+  View,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+  Alert,
+  Keyboard,
+  TouchableWithoutFeedback,
+} from "react-native";
+import { FontAwesome } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
+import * as Animatable from "react-native-animatable";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { ActivityIndicator } from "react-native-paper";
 
 export default function LoginScreen({ navigation }) {
   const register = () => navigation.navigate("Register");
@@ -14,13 +26,6 @@ export default function LoginScreen({ navigation }) {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(true);
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      headerShown: true,
-      headerTitle: "Zaloguj",
-    });
-  }, []);
 
   useEffect(() => {
     getData();
@@ -41,7 +46,7 @@ export default function LoginScreen({ navigation }) {
 
   const login = async () => {
     if (email.trim().length == 0 || password.trim().length == 0) {
-      Alert("Podaj dane logowania");
+      alert("Podaj dane logowania");
       return;
     }
 
@@ -60,8 +65,6 @@ export default function LoginScreen({ navigation }) {
         if (responce.status === 200) {
           const result = await responce.json();
           await AsyncStorage.setItem("body", JSON.stringify(result));
-
-          alert("Logowanie powiodło się");
           navigation.navigate("Home");
         } else {
           alert("Błędne dane logowania");
@@ -75,103 +78,165 @@ export default function LoginScreen({ navigation }) {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.view}>
-        <TextInput
-          autoCapitalize="none"
-          activeUnderlineColor="#b0b4be"
-          underlineColor="transparent"
-          style={{ marginBottom: 10 }}
-          label="Email"
-          keybordType="email-address"
-          onChangeText={(value) => setEmail(value)}
-          left={<TextInput.Icon name="email" color="#62687a" />}
-        />
-        <TextInput
-          autoCapitalize="none"
-          activeUnderlineColor="#b0b4be"
-          underlineColor="transparent"
-          style={{ marginBottom: 5 }}
-          label="Haslo"
-          secureTextEntry={passwordVisible}
-          left={<TextInput.Icon name="lock" color="#62687a" />}
-          right={
-            <TextInput.Icon
-              name={passwordVisible ? "eye" : "eye-off"}
-              color="#b0b4be"
-              onPress={() => setPasswordVisible(!passwordVisible)}
-            />
-          }
-          onChangeText={(value) => setPassword(value)}
-        />
-        <Pressable
-          style={{
-            flexDirection: "row",
-            justifyContent: "flex-end",
-            marginBottom: 10,
-          }}
-          onPress={reset}
-        >
-          <Text style={{ color: "#162c4a" }}>Zapomniałeś hasła</Text>
-        </Pressable>
-
-        {loading ? (
-          <ActivityIndicator />
-        ) : (
-          <LinearGradient
-            start={{ x: 0.7, y: 0 }}
-            onPress={login}
-            colors={["#ffc400", "#ff8800"]}
-            style={styles.login}
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.textHeader}>Zaloguj się</Text>
+        </View>
+        <Animatable.View animation="fadeInUpBig" style={styles.footer}>
+          <KeyboardAvoidingView
+            behavior={Platform.OS === "ios" ? "padding" : null}
           >
-            <Text style={styles.text}>Zaloguj</Text>
-          </LinearGradient>
-        )}
-        <LinearGradient
-          colors={["#4c669f", "#3b5998", "#192f6a"]}
-          style={styles.facebook}
-        >
-          <Text style={styles.text}>Zaloguj z Facebook</Text>
-        </LinearGradient>
-        <LinearGradient
-          start={{ x: 0.7, y: 0 }}
-          onPress={register}
-          colors={["#ffff84", "#ffe501", "#fecd01", "#ffac00"]}
-          style={styles.login}
-        >
-          <Text style={styles.text}>Zarejestruj</Text>
-        </LinearGradient>
+            <Text style={styles.textFooter}>E-mail</Text>
+            <View style={styles.action}>
+              <FontAwesome
+                name="user"
+                size={20}
+                color="black"
+                style={styles.icon}
+              />
+              <TextInput
+                onChangeText={(value) => setEmail(value)}
+                autoCapitalize="none"
+                keybordType="email-address"
+                placeholder="E-mail"
+                style={styles.textInput}
+              />
+            </View>
+
+            <Text style={[styles.textFooter, { marginTop: 25 }]}>Hasło</Text>
+            <View style={styles.action}>
+              <FontAwesome name="lock" size={20} color="black" />
+              <TextInput
+                autoCapitalize="none"
+                placeholder="Hasło"
+                style={styles.textInput}
+                onChangeText={(value) => setPassword(value)}
+                secureTextEntry={passwordVisible}
+              />
+              <Ionicons
+                style={styles.icon}
+                name={passwordVisible ? "eye-outline" : "eye-off-outline"}
+                onPress={() => setPasswordVisible(!passwordVisible)}
+                size={20}
+                color="black"
+              />
+            </View>
+          </KeyboardAvoidingView>
+
+          <TouchableOpacity onPress={reset}>
+            <Text style={{ color: "#162c4a", marginTop: 15 }}>
+              Zapomniałem hasła
+            </Text>
+          </TouchableOpacity>
+
+          {loading ? (
+            <ActivityIndicator />
+          ) : (
+            <View style={styles.button}>
+              <TouchableOpacity onPress={login} style={styles.signIn}>
+                <LinearGradient
+                  colors={["#5db8fe", "#39cff2"]}
+                  style={styles.signIn}
+                >
+                  <Text style={[styles.textSign, { color: "white" }]}>
+                    Zaloguj
+                  </Text>
+                </LinearGradient>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={register}
+                style={[
+                  styles.signIn,
+                  { borderColor: "#4dc2f8", borderWidth: 1, marginTop: 15 },
+                ]}
+              >
+                <Text style={[styles.textSign, { color: "#5db8fe" }]}>
+                  Zarejestruj
+                </Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                onPress={register}
+                style={[
+                  styles.signIn,
+                  { borderColor: "#4dc2f8", borderWidth: 1, marginTop: 15 },
+                ]}
+              >
+                <LinearGradient
+                  colors={["#5db8fe", "#39cff2"]}
+                  style={styles.signIn}
+                >
+                  <Text style={[styles.textSign, { color: "white" }]}>
+                    Facebook
+                  </Text>
+                </LinearGradient>
+              </TouchableOpacity>
+            </View>
+          )}
+        </Animatable.View>
       </View>
-    </SafeAreaView>
+    </TouchableWithoutFeedback>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    display: "flex",
     flex: 1,
+    backgroundColor: "#009245",
+  },
+  header: {
+    flex: 1,
+    justifyContent: "flex-end",
+    paddingHorizontal: 20,
+    paddingBottom: 50,
+  },
+  footer: {
+    flex: 3,
+    backgroundColor: "white",
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    paddingHorizontal: 20,
+    paddingVertical: 30,
+  },
+  textHeader: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 30,
+  },
+  textFooter: {
+    color: "black",
+    fontSize: 18,
+  },
+  action: {
+    flexDirection: "row",
+    marginTop: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: "#f2f2f2",
+    paddingBottom: 5,
+  },
+  textInput: {
+    fontSize: 16,
+    flex: 1,
+    paddingLeft: 10,
+  },
+  button: {
+    alignItems: "center",
+    marginTop: 50,
+  },
+  signIn: {
+    width: "100%",
+    height: 50,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#ffffff",
+    borderRadius: 10,
   },
-  view: {
-    width: "90%",
+  textSign: {
+    fontSize: 18,
+    fontWeight: "bold",
   },
-  login: {
-    padding: 10,
-    alignItems: "center",
-    borderRadius: 5,
-    marginVertical: 5,
-  },
-  facebook: {
-    padding: 15,
-    alignItems: "center",
-    borderRadius: 5,
-    marginVertical: 5,
-  },
-  text: {
-    backgroundColor: "transparent",
-    fontSize: 16,
-    color: "#fff",
+  icon: {
+    marginTop: 3,
   },
 });

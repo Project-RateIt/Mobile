@@ -2,9 +2,9 @@ import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import React from "react";
 import { LinearGradient } from "expo-linear-gradient";
 
-const Category = ({ item, navigation }) => {
+const Subcategory = ({ item, navigation }) => {
   const mainCategory = () =>
-    navigation.navigate("CategoryRanking", { item: item });
+    navigation.navigate("SubategoryRanking", { item: item });
 
   return (
     <LinearGradient
@@ -20,13 +20,12 @@ const Category = ({ item, navigation }) => {
   );
 };
 
-export default Category;
+export default Subcategory;
 
 const styles = StyleSheet.create({
   listItem: {
-    flex: 1,
-
     margin: 1,
+    flex: 1,
   },
   container: {
     flex: 1,

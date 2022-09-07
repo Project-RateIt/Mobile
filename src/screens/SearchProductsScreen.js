@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { FlatList, Text, View } from "react-native";
+import { FlatList, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import Product from "../components/product/product";
 import { Searchbar } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -63,8 +64,18 @@ const SearchProductsScreen = ({ navigation }) => {
     setProduct([]);
   }, [query]);
 
+  ItemSeparatorComponent = () => {
+    return (
+      <View
+        style={{
+          height: 5,
+        }}
+      />
+    );
+  };
+
   return (
-    <View>
+    <SafeAreaView style={{ flex: 1 }}>
       <Searchbar
         placeholder="Search"
         onChangeText={setQuery}
@@ -74,16 +85,19 @@ const SearchProductsScreen = ({ navigation }) => {
       />
 
       <FlatList
-        initialNumToRender={6}
+        horizontal={false}
+        style={{ flex: 1 }}
         numColumns={2}
         data={product}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <Product id={item.id} item={item} navigation={navigation} />
         )}
+        onEndReachedThreshold={3}
         onEndReached={() => setPageNumber((previous) => (previous += 1))}
+        showsVerticalScrollIndicator={false}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 

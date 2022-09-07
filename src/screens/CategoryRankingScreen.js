@@ -1,13 +1,14 @@
-import { StyleSheet, Text, View, FlatList } from "react-native";
+import { StyleSheet, Text, View, FlatList, Pressable } from "react-native";
 import React, { useState, useEffect } from "react";
-import Product from "../components/product/product";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import Subcategory from "../components/ranking/subcategory";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
 
-const CategoryRankingScreen = ({ navigation, route }) => {
-  const [product, setProduct] = useState([]);
+const RankingScreen = ({ navigation, route }) => {
+  const [category, setCategory] = useState([]);
   const [token, setToken] = useState("");
   const [userId, setUserId] = useState("");
-  const [pageNumber, setPageNumber] = useState(0);
 
   const getData = () => {
     try {
@@ -25,11 +26,14 @@ const CategoryRankingScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     getData();
-    token !== "" && userId !== "" && getRanking();
+    token !== "" && userId !== "" && getCategories();
   }, [token, userId]);
 
-  const getRanking = () => {
-    fetch("http://91.227.2.183:443/products/getCategoryRanking", {
+  const getCategories = () => {
+    console.log("token");
+    console.log(token);
+    console.log(userId);
+    fetch("http://91.227.2.183:443/products/getSubcategories", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -37,42 +41,39 @@ const CategoryRankingScreen = ({ navigation, route }) => {
       body: JSON.stringify({
         token: token,
         userId: userId,
-        page: pageNumber,
         categoryId: route.params.item.id,
       }),
-    }).then((response) => {
-      if (response.status === 200) {
-        response.json().then((data) => {
-          setProduct((previousData) => [...previousData, ...data]);
+    }).then((responce) => {
+      if (responce.status === 200) {
+        responce.json().then((data) => {
+          setCategory((previousData) => [...previousData, ...data]);
         });
       } else {
-        console.log("-------------------------err-------------");
-        console.log(token);
-        console.log(userId);
-        console.log(pageNumber);
-        console.log(route.params.item.id);
+        console.log(error);
       }
     });
   };
 
-  useEffect(() => {
-    getRanking();
-  }, [pageNumber]);
-
   return (
-    <View>
+    <SafeAreaView>
       <FlatList
-        data={product}
-        keyExtractor={(item) => item.id}
+        columnWrapperStyle={styles.row}
+        numColumns={3}
+        data={category}
+        keyExtractor={(id) => id}
         renderItem={({ item }) => (
-          <Product id={item.id} item={item} navigation={navigation} />
+          <Subcategory id={item.id} item={item} navigation={navigation} />
         )}
-        onEndReached={() => setPageNumber((previous) => (previous += 1))}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
-export default CategoryRankingScreen;
+export default RankingScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  row: {
+    flex: 1,
+    justifyContent: "space-around",
+  },
+});
