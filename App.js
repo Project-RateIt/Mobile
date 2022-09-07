@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import AppNavigation from "../src/navigation/AppNavigation";
-import TabNavigator from "./navigation/TabNavigation";
+import AppNavigation from "./src/navigation/AppNavigation";
+import TabNavigator from "./src/navigation/TabNavigation";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 function App() {
