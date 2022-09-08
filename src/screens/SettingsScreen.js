@@ -103,8 +103,8 @@ const Settings = () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
-      width: 200,
-      height: 200,
+      width: 500,
+      height: 500,
       aspect: [4, 3],
       quality: 0.5,
       base64: true,

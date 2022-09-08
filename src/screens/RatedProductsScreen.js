@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FlatList, View, Text, StyleSheet } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import Product from "../components/product/product";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -54,30 +55,22 @@ const RatedProductsScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Text>Ocenione produkty</Text>
-
+    <SafeAreaView style={{ flex: 1 }}>
       <FlatList
+        horizontal={false}
+        style={{ flex: 1 }}
+        numColumns={2}
         data={product}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <Product
-            id={item.id}
-            item={item}
-            pressHandler={pressHandler}
-            navigation={navigation}
-          />
+          <Product id={item.id} item={item} navigation={navigation} />
         )}
-        contentContainerStyle={{ paddingBottom: 19 }}
+        showsVerticalScrollIndicator={false}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-  },
-});
+const styles = StyleSheet.create({});
 
 export default RatedProductsScreen;

@@ -58,10 +58,12 @@ export default function BarcodeScanner({ navigation }) {
           },
           {
             text: "Dalej",
-            onPress: () =>
+            onPress: () => {
               navigation.navigate("ProductDetails", {
                 item: parsedResopnse,
               }),
+                setScanned(false);
+            },
           },
         ]);
       }
@@ -103,5 +105,6 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: "column",
     justifyContent: "center",
+    backgroundColor: "black",
   },
 });

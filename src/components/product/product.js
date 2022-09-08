@@ -15,8 +15,8 @@ import { LinearGradient } from "expo-linear-gradient";
 
 const Product = ({ item, navigation, id }) => {
   const [rating, setRating] = useState();
-  const rate = () => navigation.navigate("Rate", { id: id });
-  const note = () => navigation.navigate("Note", { id: id });
+  const rate = () => navigation.navigate("Rate", { item: item });
+  const note = () => navigation.navigate("Note", { item: item });
   const productDetails = () =>
     navigation.navigate("ProductDetails", { item: item });
 
@@ -47,12 +47,9 @@ const Product = ({ item, navigation, id }) => {
           <View style={styles.image_container}>
             <Image style={styles.image} source={{ uri: item.image }} />
           </View>
-          <Text numberOfLines={1} style={styles.name}>
-            {item.name}
-          </Text>
-          <Text numberOfLines={1} style={styles.rating}>
-            {item.producer}
-          </Text>
+          <View style={styles.text_container}>
+            <Text style={styles.name}>{item.name}</Text>
+          </View>
           <View style={styles.price_container}>
             <View style={styles.price}>
               <Text style={styles.textPrice}>{rating}</Text>
@@ -110,25 +107,32 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: "100%",
-    borderRadius: 10,
+    borderTopLeftRadius: 10,
   },
   content: {
     flex: 1,
     justifyContent: "center",
     paddingHorizontal: 10,
   },
+  text_container: {
+    justifyContent: "center",
+    height: 50,
+    marginHorizontal: 10,
+    marginVertical: 5,
+  },
   name: {
     color: "white",
     fontSize: 14,
+    textAlign: "center",
   },
   rating: {
-    marginTop: 5,
     flexDirection: "row",
     color: "white",
     fontWeight: "bold",
     fontSize: 16,
   },
   button: {
+    marginLeft: 10,
     width: 30,
     height: 30,
     backgroundColor: "white",
@@ -139,7 +143,9 @@ const styles = StyleSheet.create({
   price_container: {
     alignItems: "flex-end",
     flexDirection: "row",
-    marginTop: 10,
+    justifyContent: "center",
+    marginTop: 5,
+    paddingBottom: 10,
   },
   price: {
     backgroundColor: "white",
