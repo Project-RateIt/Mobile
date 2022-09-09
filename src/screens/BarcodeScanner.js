@@ -48,10 +48,9 @@ export default function BarcodeScanner({ navigation }) {
         userId: userId,
       }),
     }).then(async (responce) => {
-      const parsedResopnse = await responce.json();
-
       if (responce.status === 200) {
-        Alert.alert("Pomyślnie zeskanowano", "TODO: nazwa produktu", [
+        const parsedResopnse = await responce.json();
+        Alert.alert(null, parsedResopnse.name, [
           {
             text: "Ponownie",
             onPress: () => setScanned(false),
@@ -69,16 +68,24 @@ export default function BarcodeScanner({ navigation }) {
       }
       if (responce.status === 409) {
         Alert.alert(
-          "Niestety nie mamy takiego produktu",
-          "TODO: addProductScreen",
+          "Niestety nie mamy tego produktu",
+          "Kliknij dodaj aby dodać",
           [
             {
               text: "Ponownie",
               onPress: () => setScanned(false),
             },
-            { text: "dodaj", onPress: console.log("dodaj") },
+            {
+              text: "Dalej",
+              onPress: () => {
+                console.log("dalej");
+                setScanned(false);
+              },
+            },
           ]
         );
+      } else {
+        console.log(error);
       }
     });
   };

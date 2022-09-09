@@ -27,22 +27,22 @@ export default function LoginScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(true);
 
-  useEffect(() => {
-    getData();
-  }, []);
+  // useEffect(() => {
+  //   getData();
+  // }, []);
 
-  const getData = () => {
-    try {
-      AsyncStorage.getItem("UserData").then((value) => {
-        console.log(value);
-        if (value != "null") {
-          navigation.navigate("Home");
-        }
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const getData = () => {
+  //   try {
+  //     AsyncStorage.getItem("UserData").then((value) => {
+  //       console.log(value);
+  //       if (value != null) {
+  //         navigation.navigate("Home");
+  //       }
+  //     });
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const login = async () => {
     if (email.trim().length == 0 || password.trim().length == 0) {
