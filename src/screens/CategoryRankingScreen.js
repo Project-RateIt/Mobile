@@ -43,9 +43,9 @@ const RankingScreen = ({ navigation, route }) => {
         userId: userId,
         categoryId: route.params.item.id,
       }),
-    }).then((responce) => {
-      if (responce.status === 200) {
-        responce.json().then((data) => {
+    }).then((response) => {
+      if (response.status === 200) {
+        response.json().then((data) => {
           setCategory((previousData) => [...previousData, ...data]);
         });
       } else {

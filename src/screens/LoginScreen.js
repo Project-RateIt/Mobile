@@ -27,22 +27,22 @@ export default function LoginScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(true);
 
-  // useEffect(() => {
-  //   getData();
-  // }, []);
+  useEffect(() => {
+    getData();
+  }, []);
 
-  // const getData = () => {
-  //   try {
-  //     AsyncStorage.getItem("UserData").then((value) => {
-  //       console.log(value);
-  //       if (value != null) {
-  //         navigation.navigate("Home");
-  //       }
-  //     });
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
+  const getData = () => {
+    try {
+      AsyncStorage.getItem("body").then((value) => {
+        console.log(value);
+        if (value != null) {
+          navigation.navigate("Home");
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const login = async () => {
     if (email.trim().length == 0 || password.trim().length == 0) {
@@ -61,9 +61,9 @@ export default function LoginScreen({ navigation }) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(body),
-      }).then(async (responce) => {
-        if (responce.status === 200) {
-          const result = await responce.json();
+      }).then(async (response) => {
+        if (response.status === 200) {
+          const result = await response.json();
           await AsyncStorage.setItem("body", JSON.stringify(result));
           navigation.navigate("Home");
         } else {

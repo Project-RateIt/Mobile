@@ -22,6 +22,7 @@ const ProductScreen = ({ route, navigation }) => {
   let avgRate = Math.round(
     route.params.item.rateSum / route.params.item.rateCount
   );
+
   useEffect(() => {
     if (route.params.item.rateSum === 0 || route.params.item.rateCount === 0) {
       setRating("Brak ocen");

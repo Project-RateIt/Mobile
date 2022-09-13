@@ -16,46 +16,53 @@ const SplashScreen = ({ navigation }) => {
   const [userId, setUserId] = useState("");
   const [isUserExist, setIsUserExist] = useState(false);
 
+  // useEffect(() => {
+  //   startApp();
+  // }, []);
+
+  const startApp = async () =>{
+    const isBackendOnline =  TestApi();
+    if(!isBackendOnline){
+      Alert.alert("Błąd połączenia", "Upewnij się ze masz połączenie z internetem, lub spróbuj ponownie później.", [
+        {
+          text: "Spróbuj ponownie",
+          onPress: () => {
+            isBackendOnline()
+          },
+        },
+      ]);
+      return;
+    }
+    await getUserExist();
+  }
+
   const TestApi = async ()=>{
     fetch('http://91.227.2.183:443/').then((response)=>{
     return response.status === 200;
   })
   }
+  
+  // useEffect(() => {
+  //   getData();
+  //   getUserExist();
+  // });
 
-  const IsBackendOnline =  TestApi();
-  if(!IsBackendOnline){
-    Alert.alert("Błąd połączenia", "Upewnij się ze masz połączenie z internetem, lub spróbuj ponownie później.", [
-      {
-        text: "Spróbuj ponownie",
-        onPress: () => {
-          IsBackendOnline()
-        },
-      },
-    ]);
-    return;
-  }
-
-  const getData = () => {
+  const getUserExist = async () => {
     try {
       AsyncStorage.getItem("body").then((value) => {
         if (value !== null) {
           let body = JSON.parse(value);
           setToken(body.token);
           setUserId(body.user.id);
+        }else{
+          AsyncStorage.setItem("body", null)
         }
       });
     } catch (error) {
       console.log(error);
     }
-  };
 
-  useEffect(() => {
-    getData();
-    getUserExist();
-  });
-
-  const getUserExist = () => {
-    fetch("http://91.227.2.183:443/user/isUserExist", {
+   await fetch("http://91.227.2.183:443/user/isUserExist", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -64,23 +71,18 @@ const SplashScreen = ({ navigation }) => {
         token: token,
         userId: userId,
       }),
-    }).then((response) => {
+    }).then(async(response) => {
       if (response.status === 200) {
-        setIsUserExist(true);
+        await AsyncStorage.setItem("body", JSON.stringify(response))
+        await navigation.navigate("Home");
       } else {
-        setIsUserExist(false);
+        AsyncStorage.setItem("body", JSON.stringify(null))
+        await navigation.navigate("Login");
       }
     });
   };
 
 
-  const login = () => {
-    if (isUserExist == true) {
-      navigation.navigate("Home");
-    } else {
-      navigation.navigate("Login");
-    }
-  };
 
   return (
     <View style={styles.container}>
@@ -99,7 +101,7 @@ const SplashScreen = ({ navigation }) => {
           {isUserExist ? "Kontynuuj" : "Zaloguj się"}
         </Text>
         <View style={styles.button}>
-          <TouchableOpacity onPress={login}>
+          <TouchableOpacity onPress={startApp}>
             <LinearGradient
               colors={["#009245", "#8cc631"]}
               style={styles.signIn}

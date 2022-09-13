@@ -38,7 +38,7 @@ const NoteScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     getData();
-  }, []);
+  }, );
 
   const submit = () => {
     fetch("http://91.227.2.183:443/products/note", {
@@ -52,10 +52,10 @@ const NoteScreen = ({ route, navigation }) => {
         productId: route.params.item.id,
         note: note,
       }),
-    }).then((responce) => {
-      if (responce.status === 200) {
+    }).then((response) => {
+      if (response.status === 200) {
         alert("Dodano notatke");
-        navigation.navigate("Home");
+        navigation.navigate("ProductDetails", { item: route.params.item });
       } else {
         alert("Spróbuj ponownie");
       }

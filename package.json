@@ -19,7 +19,7 @@
     "@react-navigation/native": "^6.0.10",
     "@react-navigation/native-stack": "^6.6.2",
     "@react-navigation/stack": "^6.2.1",
-    "expo": "~45.0.0",
+    "expo": "46.0.0",
     "expo-barcode-scanner": "~11.3.0",
     "expo-image-picker": "~13.1.1",
     "expo-linear-gradient": "~11.3.0",
@@ -32,7 +32,8 @@
     "react-native-btr": "^2.2.0",
     "react-native-image-base64": "^0.1.4",
     "react-native-paper": "^4.12.2",
-    "react-native-web": "^0.18.1"
+    "react-native-web": "^0.18.1",
+    "expo-linking": "~3.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

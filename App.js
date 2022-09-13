@@ -36,8 +36,8 @@ function App() {
   //     token: token,
   //     userId: userId,
   //   }),
-  // }).then((responce) => {
-  //   if (responce.status === 200) {
+  // }).then((response) => {
+  //   if (response.status === 200) {
   //     setIsUserExist(true);
   //   } else {
   //     setIsUserExist(false);

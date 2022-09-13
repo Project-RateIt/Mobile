@@ -53,9 +53,10 @@ const RateScreen = ({ navigation, route }) => {
           productId: route.params.item.id,
           rate: rate,
         }),
-      }).then((responce) => {
-        if (responce.status === 200) {
+      }).then((response) => {
+        if (response.status === 200) {
           alert("Oceniono pomyślnie");
+          navigation.navigate("ProductDetails", { item: route.params.item });
         } else {
           alert("Spróbuj ponownie");
         }
@@ -76,9 +77,10 @@ const RateScreen = ({ navigation, route }) => {
         userId,
         productId: route.params.item.id,
       }),
-    }).then((responce) => {
-      if (responce.status === 200) {
+    }).then((response) => {
+      if (response.status === 200) {
         alert("Usunięto ocenę pomyślnie");
+        navigation.navigate("ProductDetails", { item: route.params.item });
       } else {
         alert("Spróbuj ponownie");
       }

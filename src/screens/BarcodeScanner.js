@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Text, View, StyleSheet, Alert, Button } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import CameraPermission from "../components/cameraPermission/cameraPermission";
 
 export default function BarcodeScanner({ navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
@@ -47,9 +48,9 @@ export default function BarcodeScanner({ navigation }) {
         ean: data.toString(),
         userId: userId,
       }),
-    }).then(async (responce) => {
-      if (responce.status === 200) {
-        const parsedResopnse = await responce.json();
+    }).then(async (response) => {
+      if (response.status === 200) {
+        const parsedResopnse = await response.json();
         Alert.alert(null, parsedResopnse.name, [
           {
             text: "Ponownie",
@@ -66,7 +67,7 @@ export default function BarcodeScanner({ navigation }) {
           },
         ]);
       }
-      if (responce.status === 409) {
+      if (response.status === 409) {
         Alert.alert(
           "Niestety nie mamy tego produktu",
           "Kliknij dodaj aby dodać",
@@ -91,10 +92,10 @@ export default function BarcodeScanner({ navigation }) {
   };
 
   if (hasPermission === null) {
-    return <Text>Requesting for camera permission</Text>;
+    return <CameraPermission/>;
   }
   if (hasPermission === false) {
-    return <Text>No access to camera</Text>;
+    return <CameraPermission/>;
   }
 
   return (

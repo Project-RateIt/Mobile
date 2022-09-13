@@ -40,9 +40,9 @@ const HomeScreen = ({ navigation }) => {
   }, [avatar, userId, isAdmin, name]);
 
   fetch("http://91.227.2.183:5002/avatars_rateit/" + userId)
-    .then((responce) => responce.text())
-    .then((responce) => {
-      setUserAvatar(responce);
+    .then((response) => response.text())
+    .then((response) => {
+      setUserAvatar(response);
     });
 
   navigation.setOptions({ headerShown: false });

@@ -55,9 +55,9 @@ export default function RegisterScreen({ navigation }) {
           token,
           email,
         }),
-      }).then((responce) => {
-        responce.json();
-        if (responce.status === 200) {
+      }).then((response) => {
+        response.json();
+        if (response.status === 200) {
           alert("Link do zmiany hasła zostal wyslany");
           navigation.navigate("Login");
         } else {
