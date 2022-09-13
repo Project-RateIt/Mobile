@@ -16,10 +16,29 @@ const SplashScreen = ({ navigation }) => {
   const [userId, setUserId] = useState("");
   const [isUserExist, setIsUserExist] = useState(false);
 
+  const TestApi = async ()=>{
+    fetch('http://91.227.2.183:443/').then((response)=>{
+    return response.status === 200;
+  })
+  }
+
+  const IsBackendOnline =  TestApi();
+  if(!IsBackendOnline){
+    Alert.alert("Błąd połączenia", "Upewnij się ze masz połączenie z internetem, lub spróbuj ponownie później.", [
+      {
+        text: "Spróbuj ponownie",
+        onPress: () => {
+          IsBackendOnline()
+        },
+      },
+    ]);
+    return;
+  }
+
   const getData = () => {
     try {
       AsyncStorage.getItem("body").then((value) => {
-        if (value != null) {
+        if (value !== null) {
           let body = JSON.parse(value);
           setToken(body.token);
           setUserId(body.user.id);
@@ -45,14 +64,15 @@ const SplashScreen = ({ navigation }) => {
         token: token,
         userId: userId,
       }),
-    }).then((responce) => {
-      if (responce.status === 200) {
+    }).then((response) => {
+      if (response.status === 200) {
         setIsUserExist(true);
       } else {
         setIsUserExist(false);
       }
     });
   };
+
 
   const login = () => {
     if (isUserExist == true) {
