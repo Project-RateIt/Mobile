@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Text,
   View,
@@ -27,34 +27,14 @@ export default function LoginScreen({ navigation }) {
   const [loading, setLoading] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(true);
 
-  useEffect(() => {
-    getData();
-  }, []);
-
-  const getData = () => {
-    try {
-      AsyncStorage.getItem("body").then((value) => {
-        console.log(value);
-        if (value != null) {
-          navigation.navigate("Home");
-        }
-      });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const login = async () => {
     if (email.trim().length == 0 || password.trim().length == 0) {
       alert("Podaj dane logowania");
       return;
     }
-
     try {
       const body = { email, password };
-
       setLoading(true);
-
       fetch("http://91.227.2.183:443/user/login", {
         method: "POST",
         headers: {
@@ -65,7 +45,7 @@ export default function LoginScreen({ navigation }) {
         if (response.status === 200) {
           const result = await response.json();
           await AsyncStorage.setItem("body", JSON.stringify(result));
-          navigation.navigate("Home");
+          navigation.navigate("Splash");
         } else {
           alert("Błędne dane logowania");
         }

@@ -4,6 +4,7 @@ import {
   View,
   Dimensions,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import * as Animatable from "react-native-animatable";
@@ -12,77 +13,65 @@ import { MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SplashScreen = ({ navigation }) => {
-  const [token, setToken] = useState("");
-  const [userId, setUserId] = useState("");
-  const [isUserExist, setIsUserExist] = useState(false);
+  useEffect(() => {
+    startApp();
+  }, []);
 
-  // useEffect(() => {
-  //   startApp();
-  // }, []);
-
-  const startApp = async () =>{
-    const isBackendOnline =  TestApi();
-    if(!isBackendOnline){
-      Alert.alert("Błąd połączenia", "Upewnij się ze masz połączenie z internetem, lub spróbuj ponownie później.", [
-        {
-          text: "Spróbuj ponownie",
-          onPress: () => {
-            isBackendOnline()
+  const startApp = async () => {
+    const isBackendOnline = await testApi();
+    if (!isBackendOnline) {
+      Alert.alert(
+        "Błąd połączenia",
+        "Upewnij się ze masz połączenie z internetem, lub spróbuj ponownie później.",
+        [
+          {
+            text: "Spróbuj ponownie",
+            onPress: () => {
+              startApp();
+            },
           },
-        },
-      ]);
+        ]
+      );
       return;
     }
     await getUserExist();
-  }
+  };
 
-  const TestApi = async ()=>{
-    fetch('http://91.227.2.183:443/').then((response)=>{
-    return response.status === 200;
-  })
-  }
-  
-  // useEffect(() => {
-  //   getData();
-  //   getUserExist();
-  // });
+  const testApi = async () => {
+    return await fetch("http://91.227.2.183:443/example/test").then(
+      (response) => {
+        return response.status === 404;
+      }
+    );
+  };
 
   const getUserExist = async () => {
     try {
-      AsyncStorage.getItem("body").then((value) => {
-        if (value !== null) {
-          let body = JSON.parse(value);
-          setToken(body.token);
-          setUserId(body.user.id);
-        }else{
-          AsyncStorage.setItem("body", null)
+      const user = await AsyncStorage.getItem("body");
+      if (user === null) return;
+      let body = JSON.parse(user);
+      reqBody = { token: body.token, id: body.user.id };
+
+      await fetch("http://91.227.2.183:443/user/isUserExist", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(reqBody),
+      }).then((response) => {
+        console.log(response);
+        if (response.ok) {
+          navigation.navigate("Home");
+          return;
+        } else {
+          navigation.navigate("Login");
+          return;
         }
       });
     } catch (error) {
       console.log(error);
     }
-
-   await fetch("http://91.227.2.183:443/user/isUserExist", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        token: token,
-        userId: userId,
-      }),
-    }).then(async(response) => {
-      if (response.status === 200) {
-        await AsyncStorage.setItem("body", JSON.stringify(response))
-        await navigation.navigate("Home");
-      } else {
-        AsyncStorage.setItem("body", JSON.stringify(null))
-        await navigation.navigate("Login");
-      }
-    });
   };
-
-
 
   return (
     <View style={styles.container}>
@@ -98,10 +87,11 @@ const SplashScreen = ({ navigation }) => {
       <Animatable.View style={styles.footer} animation="fadeInUpBig">
         <Text style={styles.title}>JAKIŚ TEKST ZACHĘCAJĄCY</Text>
         <Text style={styles.text}>
-          {isUserExist ? "Kontynuuj" : "Zaloguj się"}
+          {/* {isBackendOnline ? "Kontynuuj" : "Zaloguj się"} */}
+          TEKST
         </Text>
         <View style={styles.button}>
-          <TouchableOpacity onPress={startApp}>
+          <TouchableOpacity onPress={"login"}>
             <LinearGradient
               colors={["#009245", "#8cc631"]}
               style={styles.signIn}
