@@ -13,6 +13,7 @@ import React, { useState, useEffect } from "react";
 import * as Animatable from "react-native-animatable";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ProductScreen = ({ route, navigation }) => {
   const rate = () => navigation.navigate("Rate", { item: route.params.item });
@@ -23,7 +24,47 @@ const ProductScreen = ({ route, navigation }) => {
     route.params.item.rateSum / route.params.item.rateCount
   );
 
+  const [token, setToken] = useState("");
+  const [userId, setUserId] = useState("");
+
+  const getData = () => {
+    try {
+      AsyncStorage.getItem("body").then((value) => {
+        if (value != null) {
+          let body = JSON.parse(value);
+          setToken(body.token);
+          setUserId(body.user.id);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const addToViewedProducts = async () => {
+    await fetch("http://91.227.2.183:443/products/viewProduct", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        token,
+        productId: route.params.item.id,
+        userId,
+      }),
+    }).then((response) => {
+      if (response.status === 200) {
+        alert("udalo sie");
+      } else {
+        alert("wypierdala sie");
+        console.log(response);
+      }
+    });
+  };
+
   useEffect(() => {
+    getData();
+    addToViewedProducts();
     if (route.params.item.rateSum === 0 || route.params.item.rateCount === 0) {
       setRating("Brak ocen");
     } else {
@@ -84,7 +125,14 @@ const ProductScreen = ({ route, navigation }) => {
             <Text style={styles.textOrder}>NOTATKA</Text>
           </LinearGradient>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => alert("Janek musi zrobić endpoint")}>
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("SubategoryRanking", {
+              item: route.params.item.subcategory,
+              itemId: route.params.item.id,
+            })
+          }
+        >
           <LinearGradient
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 0 }}

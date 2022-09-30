@@ -11,51 +11,62 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from "react-native";
-import { FontAwesome } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Ionicons } from "@expo/vector-icons";
 import * as Animatable from "react-native-animatable";
-import { MaterialIcons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import { ActivityIndicator } from "react-native-paper";
 
-export default function RegisterScreen({ navigation }) {
-  const [name, setName] = useState("");
-  const [surname, setSurname] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+export default function AddProduct({ navigation, route }) {
+  const [token, setToken] = useState("");
+  const [userId, setUserId] = useState("");
+  const [productName, setProductName] = useState("");
   const [loading, setLoading] = useState(false);
-  const [passwordVisible, setPasswordVisible] = useState(true);
 
-  const register = async () => {
-    if (
-      email.trim().length == 0 ||
-      password.trim().length == 0 ||
-      name.trim().length == 0 ||
-      surname.trim().length == 0
-    ) {
-      alert("Podaj dane rejestracji");
+  const getData = () => {
+    try {
+      AsyncStorage.getItem("body").then((value) => {
+        if (value != null) {
+          let body = JSON.parse(value);
+          setToken(body.token);
+          setUserId(body.user.id);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  const add = async () => {
+    if (productName.trim().length == 0) {
+      alert("Podaj nazwę produktu");
       return;
     }
     setLoading(true);
-    fetch("http://91.227.2.183:443/user/register", {
+    fetch("http://91.227.2.183:443/products/addProduct", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        name,
-        surname,
-        email,
-        password,
+        token,
+        userId,
+        productName,
+        ean: route.params.ean,
       }),
     }).then((response) => {
       response.json();
       if (response.status === 200) {
         setLoading(false);
-        alert("Rejestracja powiodła się");
-        navigation.navigate("Login");
+        alert("Dodano produkt");
+        navigation.goBack();
       } else {
         setLoading(false);
-        alert("Błędne dane logowania");
+        alert("Wystąpił błąd");
       }
     });
   };
@@ -72,80 +83,24 @@ export default function RegisterScreen({ navigation }) {
           />
         </View>
         <View style={styles.header}>
-          <Text style={styles.textHeader}>Zarejestruj się</Text>
+          <Text style={styles.textHeader}>Dodaj produkt</Text>
         </View>
         <Animatable.View animation="fadeInUpBig" style={styles.footer}>
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : null}
           >
-            <Text style={styles.textFooter}>Imię</Text>
+            <Text style={styles.textFooter}>Nazwa produktu</Text>
             <View style={styles.action}>
-              <FontAwesome
-                name="user"
-                size={20}
+              <Feather
+                name="plus-square"
+                size={24}
                 color="black"
                 style={styles.icon}
               />
               <TextInput
-                onChangeText={(value) => setName(value)}
-                placeholder="Imię"
+                onChangeText={(value) => setProductName(value)}
+                placeholder="Nazwa produktu"
                 style={styles.textInput}
-              />
-            </View>
-
-            <Text style={[styles.textFooter, { marginTop: 25 }]}>Nazwisko</Text>
-            <View style={styles.action}>
-              <FontAwesome
-                name="user"
-                size={20}
-                color="black"
-                style={styles.icon}
-              />
-              <TextInput
-                onChangeText={(value) => setSurname(value)}
-                placeholder="Nazwisko"
-                style={styles.textInput}
-              />
-            </View>
-
-            <Text style={[styles.textFooter, { marginTop: 25 }]}>E-mail</Text>
-            <View style={styles.action}>
-              <MaterialIcons
-                name="email"
-                size={20}
-                color="black"
-                style={styles.icon}
-              />
-              <TextInput
-                onChangeText={(value) => setEmail(value)}
-                autoCapitalize="none"
-                keybordType="email-address"
-                placeholder="E-mail"
-                style={styles.textInput}
-              />
-            </View>
-
-            <Text style={[styles.textFooter, { marginTop: 25 }]}>Hasło</Text>
-            <View style={styles.action}>
-              <FontAwesome
-                name="lock"
-                size={20}
-                color="black"
-                style={styles.icon}
-              />
-              <TextInput
-                autoCapitalize="none"
-                placeholder="Hasło"
-                style={styles.textInput}
-                onChangeText={(value) => setPassword(value)}
-                secureTextEntry={passwordVisible}
-              />
-              <Ionicons
-                style={styles.icon}
-                name={passwordVisible ? "eye-outline" : "eye-off-outline"}
-                onPress={() => setPasswordVisible(!passwordVisible)}
-                size={20}
-                color="black"
               />
             </View>
           </KeyboardAvoidingView>
@@ -155,14 +110,14 @@ export default function RegisterScreen({ navigation }) {
           ) : (
             <View style={styles.button}>
               <TouchableOpacity
-                onPress={register}
+                onPress={add}
                 style={[
                   styles.signIn,
                   { borderColor: "#4dc2f8", borderWidth: 1 },
                 ]}
               >
                 <Text style={[styles.textSign, { color: "#5db8fe" }]}>
-                  Zarejestruj
+                  Dodaj produkt
                 </Text>
               </TouchableOpacity>
             </View>
@@ -176,7 +131,7 @@ export default function RegisterScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#009245",
+    //backgroundColor: "#009245",
   },
   header: {
     flex: 1,

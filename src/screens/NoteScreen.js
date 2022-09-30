@@ -38,7 +38,7 @@ const NoteScreen = ({ route, navigation }) => {
 
   useEffect(() => {
     getData();
-  }, );
+  });
 
   const submit = () => {
     fetch("http://91.227.2.183:443/products/note", {
