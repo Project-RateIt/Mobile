@@ -45,7 +45,7 @@ export default function LoginScreen({ navigation }) {
         if (response.status === 200) {
           const result = await response.json();
           await AsyncStorage.setItem("body", JSON.stringify(result));
-          navigation.navigate("Splash");
+          navigation.navigate("Home");
         } else {
           alert("Błędne dane logowania");
         }

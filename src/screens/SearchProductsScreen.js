@@ -5,8 +5,8 @@ import Product from "../components/product/product";
 import { Searchbar } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const SearchProductsScreen = ({ navigation }) => {
-  const [query, setQuery] = useState("");
+const SearchProductsScreen = ({ navigation, route }) => {
+  const [query, setQuery] = useState(route.params.searchedText ? route.params.searchedText : '');
   const [pageNumber, setPageNumber] = useState(0);
 
   const [product, setProduct] = useState([]);
@@ -64,15 +64,15 @@ const SearchProductsScreen = ({ navigation }) => {
     setProduct([]);
   }, [query]);
 
-  ItemSeparatorComponent = () => {
-    return (
-      <View
-        style={{
-          height: 5,
-        }}
-      />
-    );
-  };
+  // const ItemSeparatorComponent = () => {
+  //   return (
+  //     <View
+  //       style={{
+  //         height: 5,
+  //       }}
+  //     />
+  //   );
+  // };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>

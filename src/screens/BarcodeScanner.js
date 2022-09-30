@@ -77,10 +77,10 @@ export default function BarcodeScanner({ navigation }) {
               onPress: () => setScanned(false),
             },
             {
-              text: "Dalej",
+              text: "Dodaj produkt",
               onPress: () => {
-                console.log("dalej");
                 setScanned(false);
+                navigation.navigate("AddProduct", { ean: data.toString() });
               },
             },
           ]
@@ -92,10 +92,10 @@ export default function BarcodeScanner({ navigation }) {
   };
 
   if (hasPermission === null) {
-    return <CameraPermission/>;
+    return <CameraPermission />;
   }
   if (hasPermission === false) {
-    return <CameraPermission/>;
+    return <CameraPermission />;
   }
 
   return (

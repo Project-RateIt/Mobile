@@ -18,6 +18,7 @@ import CategoryRankingScreen from "../screens/CategoryRankingScreen";
 import SubategoryRankingScreen from "../screens/SubcategoryRankingScreen";
 import SplashScreen from "../screens/SplashScreen";
 import TabNavigator from "./TabNavigation";
+import AddProduct from "../screens/AddProduct";
 
 const { Navigator, Screen } = createStackNavigator();
 
@@ -33,7 +34,7 @@ const AppNavigation = () => {
         <Screen name="Register" component={RegisterScreen}></Screen>
         <Screen name="Reset" component={ResetPasswordScreen}></Screen>
         <Screen name="Home" component={TabNavigator}></Screen>
-        {/* <Screen name="SearchProducts" component={SearchProductsScreen}></Screen>
+        <Screen name="SearchProducts" component={SearchProductsScreen}></Screen>
         <Screen name="RatedProducts" component={RatedProductsScreen}></Screen>
         <Screen name="Settings" component={SettingsScreen}></Screen>
         <Screen name="Rate" component={RateScreen}></Screen>
@@ -42,6 +43,7 @@ const AppNavigation = () => {
         <Screen name="ProductDetails" component={ProductScreen}></Screen>
         <Screen name="Admin" component={OrderProductsScreen}></Screen>
         <Screen name="Ranking" component={RankingScreen}></Screen>
+        <Screen name="AddProduct" component={AddProduct}></Screen>
         <Screen
           name="CategoryRanking"
           component={CategoryRankingScreen}
@@ -49,7 +51,7 @@ const AppNavigation = () => {
         <Screen
           name="SubategoryRanking"
           component={SubategoryRankingScreen}
-        ></Screen> */}
+        ></Screen>
       </Navigator>
     </NavigationContainer>
   );

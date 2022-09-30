@@ -13,10 +13,6 @@ import { MaterialIcons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SplashScreen = ({ navigation }) => {
-  useEffect(() => {
-    startApp();
-  }, []);
-
   const startApp = async () => {
     const isBackendOnline = await testApi();
     if (!isBackendOnline) {
@@ -48,7 +44,7 @@ const SplashScreen = ({ navigation }) => {
   const getUserExist = async () => {
     try {
       const user = await AsyncStorage.getItem("body");
-      if (user === null) return;
+      if (user === null) navigation.navigate("Login");
       let body = JSON.parse(user);
       reqBody = { token: body.token, id: body.user.id };
 
@@ -62,10 +58,8 @@ const SplashScreen = ({ navigation }) => {
         console.log(response);
         if (response.ok) {
           navigation.navigate("Home");
-          return;
         } else {
           navigation.navigate("Login");
-          return;
         }
       });
     } catch (error) {
@@ -91,7 +85,7 @@ const SplashScreen = ({ navigation }) => {
           TEKST
         </Text>
         <View style={styles.button}>
-          <TouchableOpacity onPress={"login"}>
+          <TouchableOpacity onPress={startApp}>
             <LinearGradient
               colors={["#009245", "#8cc631"]}
               style={styles.signIn}
