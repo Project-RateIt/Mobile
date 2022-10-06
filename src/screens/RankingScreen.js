@@ -1,8 +1,9 @@
-import { StyleSheet, Text, View, FlatList, Pressable } from "react-native";
+import { StyleSheet, Text, View, FlatList, Pressable, StatusBar } from "react-native";
 import React, { useState, useEffect } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Category from "../components/ranking/category";
 import { SafeAreaView } from "react-native-safe-area-context";
+import {FlashList} from '@shopify/flash-list'
 
 const RankingScreen = ({ navigation }) => {
   const [category, setCategory] = useState([]);
@@ -25,10 +26,10 @@ const RankingScreen = ({ navigation }) => {
 
   useEffect(() => {
     getData();
-    token !== "" && userId !== "" && getCategories();
-  }, [token, userId]);
+    getCategories();
+  }, []);
 
-  const getCategories = () => {
+  const getCategories = async() => {
     console.log("token");
     console.log(token);
     console.log(userId);
@@ -47,26 +48,37 @@ const RankingScreen = ({ navigation }) => {
           setCategory((previousData) => [...previousData, ...data]);
         });
       } else {
-        console.log(error);
+        console.log(response.text);
       }
     });
   };
 
   return (
     <SafeAreaView>
+      <StatusBar backgroundColor={'white'} barStyle={'dark-content'} />
+      <View style={styles.container}>
       <FlatList
-        horizontal={false}
-        numColumns={3}
         data={category}
         keyExtractor={(id) => id}
+        style={{width:'100%'}}
         renderItem={({ item }) => (
           <Category id={item.id} item={item} navigation={navigation} />
         )}
+        showsVerticalScrollIndicator={false}
       />
+      </View>
     </SafeAreaView>
   );
 };
 
 export default RankingScreen;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center'
+  }
+});

@@ -109,7 +109,10 @@ const HomeScreen = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.title}>Witaj, {name}</Text>
+        <View style={styles.headerText}>
+          <Text style={styles.legendTitle}>Witaj, </Text>
+          <Text style={styles.title}>{name}</Text>
+        </View>
         <Image
           animation="bounceIn"
           duration={1500}
@@ -126,7 +129,7 @@ const HomeScreen = ({ navigation }) => {
             style={styles.search_input_content}
               onChangeText={setSearched}
               value={searched}
-              placeholder='Type here...'
+              placeholder='Wyszukaj produkt'
             />
           <TouchableOpacity style={styles.search_icon} onPress={search}>
             <Ionicons name="search" size={18} color={'rgba(0,0,0,0.5)'} />
@@ -164,14 +167,14 @@ const HomeScreen = ({ navigation }) => {
   );
 };
 const { height } = Dimensions.get("screen");
-const height_logo = height * 0.3 * 0.3;
+const height_logo = height * 0.25 * 0.25;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "white",
   },
   header: {
-    backgroundColor: "#009245",
+    backgroundColor: "transparent",
     flex: 0.3,
     flexDirection: "row",
     justifyContent: "space-around",
@@ -203,8 +206,12 @@ const styles = StyleSheet.create({
     borderRadius: height_logo / 2,
   },
   title: {
-    color: "white",
+    color: Colors.primary,
     fontWeight: "bold",
+    fontSize: 30,
+  },
+  legendTitle: {
+    color: 'rgba(0,0,0,0.3)',
     fontSize: 30,
   },
   text: {
@@ -248,6 +255,9 @@ const styles = StyleSheet.create({
   search_input_content: {
     flex: 1,
     textAlign: 'center'
+  },
+  headerText: {
+    flexDirection: 'row'
   }
 });
 

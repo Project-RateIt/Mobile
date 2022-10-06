@@ -13,6 +13,10 @@ import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { Colors } from "../constants/colors";
+// icons
+import { Ionicons } from '@expo/vector-icons';
+import { MaterialIcons, FontAwesome, AntDesign  } from '@expo/vector-icons';  
 
 const Settings = () => {
   const [token, setToken] = useState("");
@@ -21,8 +25,8 @@ const Settings = () => {
   const [name, setName] = useState("");
   const [userAvatar, setUserAvatar] = useState("");
 
-  const [newEmail, setNewEmail] = useState("");
   const [newName, setNewName] = useState("");
+  const [newEmail, setNewEmail] = useState("");
 
   const getData = () => {
     try {
@@ -138,57 +142,80 @@ const Settings = () => {
     }
   };
 
+  const logOut = async()=>
+  {
+    try {
+      await AsyncStorage.removeItem('body')
+    } catch(e) {
+  
+    }
+    console.log('Done.')
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
         contentContainerStyle={{ alignItems: "center" }}
         style={styles.container}
       >
-        <View style={{ width: "90%", marginTop: 15, alignItems: "center" }}>
-          <Text style={styles.title}>Ustawienia</Text>
+        <View style={{ width: "100%", marginTop: 15, paddingHorizontal: 20}}>
+          <View style={styles.header}>
+            <Text style={styles.title}>Ustawienia</Text>
+          </View>
+          <View style={styles.section}>
+            <View style={styles.sectionLegend}>
+              <Text style={styles.sectionLegendText}>User</Text>
+            </View>
+            <View style={styles.sectionContent}>
+              <TouchableOpacity
+                onPress={changeImage}
+                style={styles.sectionContainer}
+              >
+                <Image
+                  style={styles.avatar}
+                  source={{
+                    uri: `data:image/jpeg;base64,${userAvatar}`,
+                  }}
+                />
+                <Text style={styles.sectionTitle}>Zmień avatar</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
 
-          <TouchableOpacity
-            onPress={changeImage}
-            style={styles.sectionContainer}
-          >
-            <Image
-              style={styles.avatar}
-              source={{
-                uri: `data:image/jpeg;base64,${userAvatar}`,
-              }}
-            />
-            <Text style={styles.sectionTitle}>Zmień avatar</Text>
-          </TouchableOpacity>
-
-          {/* <TouchableOpacity
+          <View style={styles.sectionContainer}>
+          
+            <TextInput placeholder="Zmień nazwę użytkownika" onChangeText={setNewName}
+        value={newName}/>
+        <TouchableOpacity
             onPress={changeName}
-            style={styles.sectionContainer}
+            
           >
-            <Text style={styles.sectionTitle}>Zmień nazwę</Text>
-          </TouchableOpacity> */}
+          </TouchableOpacity>
+          </View>
+                
+          
 
           <TouchableOpacity style={styles.sectionContainer}>
-            <Image
-              style={styles.socialMediaImage}
-              source={require("../../assets/facebook.png")}
-            />
+            <FontAwesome name="facebook-square" size={24} color={Colors.lessLightGreen} />
             <Text style={styles.sectionTitle}>Facebook</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.sectionContainer}>
-            <Image
-              style={styles.socialMediaImage}
-              source={require("../../assets/instagram.png")}
-            />
+            <AntDesign name="instagram" size={24} color={Colors.lessLightGreen} />
             <Text style={styles.sectionTitle}>Instagram</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.sectionContainer}>
+          <Ionicons name="document-text-outline" size={24} color={Colors.lessLightGreen} />
             <Text style={styles.sectionTitle}>Regulamin</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.sectionContainer}>
+            <MaterialIcons name="security" size={24} color={Colors.lessLightGreen} />
             <Text style={styles.sectionTitle}>Polityka prywatności</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.logOut} onPress={logOut}>
+            <Text style={{color: 'white',textAlign: 'center'}}>Wyloguj się</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -201,6 +228,7 @@ export default Settings;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: 'white'
   },
   userInfo: {
     flexDirection: "row",
@@ -213,15 +241,18 @@ const styles = StyleSheet.create({
     borderRadius: 300,
   },
   sectionTitle: {
-    fontSize: 20,
-    fontWeight: "700",
-    marginTop: 16,
+    fontSize: 15,
+    fontWeight: "500",
+    color: Colors.lessLightGreen
   },
   sectionContainer: {
     flexDirection: "row",
     height: 44,
-    alignItems: "center",
     justifyContent: "space-between",
+    backgroundColor: Colors.lightGreen,
+    marginBottom: 10,
+    borderRadius: 10,
+    padding: 10
   },
   socialMediaImage: {
     width: 25,
@@ -229,4 +260,24 @@ const styles = StyleSheet.create({
     marginRight: 8,
     borderRadius: 8,
   },
+  title: {
+    fontSize: 25,
+    fontWeight: 'bold',
+    textAlign: 'left'
+  },
+  header: {
+    flexDirection: 'row'
+  },
+  logOut: {
+    backgroundColor: Colors.primary,
+    borderRadius: 10,
+    color: 'white',
+    height: 44,
+    justifyContent: 'center',
+    alignContent: 'center'
+  },
+  sectionLegendText: {
+    color: Colors.lessLightGreen,
+    textTransform: 'capitalize'
+  }
 });
