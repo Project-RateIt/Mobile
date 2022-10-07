@@ -1,16 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { FlatList, View } from "react-native";
+import {
+  FlatList,
+  View,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  Keyboard,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Product from "../components/product/product";
-import { Searchbar } from "react-native-paper";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Colors } from "../constants/colors";
+import { Ionicons } from "@expo/vector-icons";
 
 const SearchProductsScreen = ({ navigation, route }) => {
-  const [query, setQuery] = useState(route.params.searchedText ? route.params.searchedText : '');
+  const [query, setQuery] = useState("");
   const [pageNumber, setPageNumber] = useState(0);
-
   const [product, setProduct] = useState([]);
-
   const [token, setToken] = useState("");
   const [userId, setUserId] = useState("");
 
@@ -64,25 +70,26 @@ const SearchProductsScreen = ({ navigation, route }) => {
     setProduct([]);
   }, [query]);
 
-  // const ItemSeparatorComponent = () => {
-  //   return (
-  //     <View
-  //       style={{
-  //         height: 5,
-  //       }}
-  //     />
-  //   );
-  // };
-
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <Searchbar
-        placeholder="Search"
-        onChangeText={setQuery}
-        value={query}
-        onIconPress={search}
-        onSubmitEditing={search}
-      />
+      <View style={styles.search_input}>
+        <TextInput
+          placeholder="Wyszukaj produkt"
+          onChangeText={setQuery}
+          value={query}
+          style={styles.search_input_content}
+          onSubmitEditing={search}
+        />
+        <TouchableOpacity
+          style={styles.search_icon}
+          onPress={() => {
+            search;
+            Keyboard.dismiss();
+          }}
+        >
+          <Ionicons name="search" size={18} color={"rgba(0,0,0,0.5)"} />
+        </TouchableOpacity>
+      </View>
 
       <FlatList
         horizontal={false}
@@ -102,3 +109,25 @@ const SearchProductsScreen = ({ navigation, route }) => {
 };
 
 export default SearchProductsScreen;
+
+const styles = StyleSheet.create({
+  search_input: {
+    width: "95%",
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    backgroundColor: Colors.lightGray,
+    margin: "2.5%",
+    padding: 10,
+    height: 50,
+    borderRadius: 10,
+    textAlign: "center",
+  },
+  search_icon: {
+    marginHorizontal: 10,
+  },
+  search_input_content: {
+    flex: 1,
+    textAlign: "center",
+  },
+});

@@ -16,7 +16,9 @@ import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ProductScreen = ({ route, navigation }) => {
-  const rate = () => navigation.navigate("Rate", { item: route.params.item });
+  const rate = () => {
+    navigation.navigate("Rate", { item: route.params.item });
+  };
   const note = () => navigation.navigate("Note", { item: route.params.item });
 
   const [rating, setRating] = useState();
@@ -54,9 +56,9 @@ const ProductScreen = ({ route, navigation }) => {
       }),
     }).then((response) => {
       if (response.status === 200) {
-        alert("udalo sie");
+        console.log("udalo sie");
       } else {
-        alert("wypierdala sie");
+        console.log("wypierdala sie");
         console.log(response);
       }
     });
@@ -70,7 +72,7 @@ const ProductScreen = ({ route, navigation }) => {
     } else {
       setRating("Ocena " + avgRate + "/10");
     }
-  }, []);
+  }, [token, userId]);
 
   return (
     <View style={styles.container}>

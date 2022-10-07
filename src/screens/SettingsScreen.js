@@ -7,18 +7,18 @@ import {
   Image,
   Alert,
   ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import { TextInput } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { Colors } from "../constants/colors";
 // icons
-import { Ionicons } from '@expo/vector-icons';
-import { MaterialIcons, FontAwesome, AntDesign  } from '@expo/vector-icons';  
+import { Ionicons } from "@expo/vector-icons";
+import { MaterialIcons, FontAwesome, AntDesign } from "@expo/vector-icons";
 
-const Settings = () => {
+const Settings = ({ navigation }) => {
   const [token, setToken] = useState("");
   const [userId, setUserId] = useState("");
   const [avatar, setAvatar] = useState("");
@@ -57,50 +57,54 @@ const Settings = () => {
       });
   };
 
-  const resetEmail = () => {
-    fetch("http://91.227.2.183:443/user/settings", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        token: "token",
-        userId: 40891190,
-        mode: 2,
-        value: newEmail,
-      }),
-    }).then((response) => {
-      if (response.status === 200) {
-        alert("Pomyślnie zmieniono avatar");
-      } else {
-        console.log("-------------------------err-------------");
-        console.log(token);
-        console.log(userId);
-      }
-    });
+  const changeEmail = () => {
+    if (newEmail !== "") {
+      fetch("http://91.227.2.183:443/user/settings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          token: "token",
+          userId: 40891190,
+          mode: 2,
+          value: newEmail,
+        }),
+      }).then((response) => {
+        if (response.status === 200) {
+          alert("Pomyślnie zmieniono email");
+        } else {
+          console.log("-------------------------err-------------");
+          console.log(token);
+          console.log(userId);
+        }
+      });
+    }
   };
 
   const changeName = () => {
-    fetch("http://91.227.2.183:443/user/settings", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        token: token,
-        id: userId,
-        mode: 0,
-        value: newName,
-      }),
-    }).then((response) => {
-      if (response.status === 200) {
-        alert("Pomyślnie zmieniono nazwe");
-      } else {
-        console.log("-------------------------err-------------");
-        console.log(token);
-        console.log(userId);
-      }
-    });
+    if (newName !== "") {
+      fetch("http://91.227.2.183:443/user/settings", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          token: token,
+          id: userId,
+          mode: 0,
+          value: newName,
+        }),
+      }).then((response) => {
+        if (response.status === 200) {
+          alert("Pomyślnie zmieniono nazwe");
+        } else {
+          console.log("-------------------------err-------------");
+          console.log(token);
+          console.log(userId);
+        }
+      });
+    }
   };
 
   const changeImage = async () => {
@@ -142,15 +146,17 @@ const Settings = () => {
     }
   };
 
-  const logOut = async()=>
-  {
+  const logOut = async () => {
     try {
-      await AsyncStorage.removeItem('body')
-    } catch(e) {
-  
+      await AsyncStorage.removeItem("body");
+      AsyncStorage.getItem("body").then((value) => {
+        console.log(value);
+      });
+      navigation.navigate("Login");
+    } catch (e) {
+      console.log(e);
     }
-    console.log('Done.')
-  }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -158,13 +164,13 @@ const Settings = () => {
         contentContainerStyle={{ alignItems: "center" }}
         style={styles.container}
       >
-        <View style={{ width: "100%", marginTop: 15, paddingHorizontal: 20}}>
+        <View style={{ width: "100%", marginTop: 15, paddingHorizontal: 20 }}>
           <View style={styles.header}>
             <Text style={styles.title}>Ustawienia</Text>
           </View>
           <View style={styles.section}>
             <View style={styles.sectionLegend}>
-              <Text style={styles.sectionLegendText}>User</Text>
+              <Text style={styles.sectionLegendText}>Użytkownik</Text>
             </View>
             <View style={styles.sectionContent}>
               <TouchableOpacity
@@ -180,42 +186,72 @@ const Settings = () => {
                 <Text style={styles.sectionTitle}>Zmień avatar</Text>
               </TouchableOpacity>
             </View>
+            <View style={styles.sectionContent}>
+              <TextInput onChangeText={setNewName} value={newName} />
+              <TouchableOpacity
+                style={styles.sectionContainer}
+                onPress={changeName}
+              >
+                <Text>Zmień nazwę użytkownika</Text>
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.sectionContent}>
+              <TextInput onChangeText={setNewEmail} value={newEmail} />
+              <TouchableOpacity
+                style={styles.sectionContainer}
+                onPress={changeEmail}
+              >
+                <Text>Zmień email</Text>
+              </TouchableOpacity>
+            </View>
           </View>
 
-          <View style={styles.sectionContainer}>
-          
-            <TextInput placeholder="Zmień nazwę użytkownika" onChangeText={setNewName}
-        value={newName}/>
-        <TouchableOpacity
-            onPress={changeName}
-            
-          >
-          </TouchableOpacity>
+          <View style={styles.sectionLegend}>
+            <Text style={styles.sectionLegendText}>Social Media</Text>
           </View>
-                
-          
-
           <TouchableOpacity style={styles.sectionContainer}>
-            <FontAwesome name="facebook-square" size={24} color={Colors.lessLightGreen} />
+            <FontAwesome
+              name="facebook-square"
+              size={24}
+              color={Colors.lessLightGreen}
+            />
             <Text style={styles.sectionTitle}>Facebook</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.sectionContainer}>
-            <AntDesign name="instagram" size={24} color={Colors.lessLightGreen} />
+            <AntDesign
+              name="instagram"
+              size={24}
+              color={Colors.lessLightGreen}
+            />
             <Text style={styles.sectionTitle}>Instagram</Text>
           </TouchableOpacity>
 
+          <View style={styles.sectionLegend}>
+            <Text style={styles.sectionLegendText}>Polityka i Regulamin</Text>
+          </View>
           <TouchableOpacity style={styles.sectionContainer}>
-          <Ionicons name="document-text-outline" size={24} color={Colors.lessLightGreen} />
+            <Ionicons
+              name="document-text-outline"
+              size={24}
+              color={Colors.lessLightGreen}
+            />
             <Text style={styles.sectionTitle}>Regulamin</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.sectionContainer}>
-            <MaterialIcons name="security" size={24} color={Colors.lessLightGreen} />
+            <MaterialIcons
+              name="security"
+              size={24}
+              color={Colors.lessLightGreen}
+            />
             <Text style={styles.sectionTitle}>Polityka prywatności</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.logOut} onPress={logOut}>
-            <Text style={{color: 'white',textAlign: 'center'}}>Wyloguj się</Text>
+            <Text style={{ color: "white", textAlign: "center" }}>
+              Wyloguj się
+            </Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -228,7 +264,7 @@ export default Settings;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white'
+    backgroundColor: "white",
   },
   userInfo: {
     flexDirection: "row",
@@ -243,7 +279,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 15,
     fontWeight: "500",
-    color: Colors.lessLightGreen
+    color: Colors.lessLightGreen,
   },
   sectionContainer: {
     flexDirection: "row",
@@ -252,7 +288,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.lightGreen,
     marginBottom: 10,
     borderRadius: 10,
-    padding: 10
+    padding: 10,
   },
   socialMediaImage: {
     width: 25,
@@ -262,22 +298,21 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 25,
-    fontWeight: 'bold',
-    textAlign: 'left'
+    fontWeight: "bold",
+    textAlign: "left",
   },
   header: {
-    flexDirection: 'row'
+    flexDirection: "row",
   },
   logOut: {
     backgroundColor: Colors.primary,
     borderRadius: 10,
-    color: 'white',
+    color: "white",
     height: 44,
-    justifyContent: 'center',
-    alignContent: 'center'
+    justifyContent: "center",
+    alignContent: "center",
   },
   sectionLegendText: {
     color: Colors.lessLightGreen,
-    textTransform: 'capitalize'
-  }
+  },
 });

@@ -8,15 +8,15 @@ import {
   Image,
   Dimensions,
   TouchableOpacity,
-  TextInput
+  TextInput,
 } from "react-native";
 import { Searchbar } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Product from "../components/product/product";
 import { LinearGradient } from "expo-linear-gradient";
-import {Colors} from '../constants/colors'
-import { Ionicons } from '@expo/vector-icons'; 
+import { Colors } from "../constants/colors";
+import { Ionicons } from "@expo/vector-icons";
 
 const HomeScreen = ({ navigation }) => {
   const [userAvatar, setUserAvatar] = useState("");
@@ -27,19 +27,19 @@ const HomeScreen = ({ navigation }) => {
   const [query, setQuery] = useState("");
   const [viewedProduct, setViewedProduct] = useState([]);
   const [rankingProduct, setRankingProduct] = useState([]);
-  const [searched, setSearched] = useState('');
+  const [searched, setSearched] = useState("");
 
   useEffect(() => {
     getData();
     getProductRanking();
     getViewedProduct();
-  }, [token, userId]);
+  }, [token, userId, name]);
 
-  const search =()=>{
+  const search = () => {
     navigation.navigate("SearchProducts", {
-      searchedText: searched
-    })
-  }
+      searchedText: searched,
+    });
+  };
 
   const getData = () => {
     try {
@@ -127,12 +127,12 @@ const HomeScreen = ({ navigation }) => {
         <View style={styles.search_input}>
           <TextInput
             style={styles.search_input_content}
-              onChangeText={setSearched}
-              value={searched}
-              placeholder='Wyszukaj produkt'
-            />
+            onChangeText={setSearched}
+            value={searched}
+            placeholder="Wyszukaj produkt"
+          />
           <TouchableOpacity style={styles.search_icon} onPress={search}>
-            <Ionicons name="search" size={18} color={'rgba(0,0,0,0.5)'} />
+            <Ionicons name="search" size={18} color={"rgba(0,0,0,0.5)"} />
           </TouchableOpacity>
         </View>
       </View>
@@ -142,9 +142,14 @@ const HomeScreen = ({ navigation }) => {
           <FlatList
             horizontal
             data={rankingProduct}
-            keyExtractor={({item, index}) => index}
+            keyExtractor={({ item, index }) => index}
             renderItem={({ item }) => (
-              <Product id={item.id} key={item.id} item={item} navigation={navigation} />
+              <Product
+                id={item.id}
+                key={item.id}
+                item={item}
+                navigation={navigation}
+              />
             )}
             showsHorizontalScrollIndicator={false}
           />
@@ -155,7 +160,7 @@ const HomeScreen = ({ navigation }) => {
           <FlatList
             horizontal
             data={viewedProduct}
-            keyExtractor={({item, index}) => index}
+            keyExtractor={({ item, index }) => index}
             renderItem={({ item }) => (
               <Product id={item.id} item={item} navigation={navigation} />
             )}
@@ -167,7 +172,7 @@ const HomeScreen = ({ navigation }) => {
   );
 };
 const { height } = Dimensions.get("screen");
-const height_logo = height * 0.25 * 0.25;
+const height_logo = height * 0.27 * 0.27;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -175,7 +180,7 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: "transparent",
-    flex: 0.3,
+    flex: 0.25,
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
@@ -211,7 +216,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
   },
   legendTitle: {
-    color: 'rgba(0,0,0,0.3)',
+    color: "rgba(0,0,0,0.3)",
     fontSize: 30,
   },
   text: {
@@ -234,31 +239,29 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
   },
-  search_box: {
-
-  },
+  search_box: {},
   search_input: {
-    width: '90%',
-    flexDirection:'row',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
+    width: "90%",
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
     backgroundColor: Colors.lightGray,
     margin: 10,
-    padding:10,
+    padding: 10,
     height: 50,
     borderRadius: 10,
-    textAlign: 'center'
+    textAlign: "center",
   },
   search_icon: {
-    marginHorizontal: 10
+    marginHorizontal: 10,
   },
   search_input_content: {
     flex: 1,
-    textAlign: 'center'
+    textAlign: "center",
   },
   headerText: {
-    flexDirection: 'row'
-  }
+    flexDirection: "row",
+  },
 });
 
 export default HomeScreen;
