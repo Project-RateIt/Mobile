@@ -10,7 +10,6 @@ import {
   TouchableOpacity,
   TextInput,
 } from "react-native";
-import { Searchbar } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Product from "../components/product/product";

@@ -1,10 +1,17 @@
-import { StyleSheet, Text, View, FlatList, Pressable, Button } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  FlatList,
+  Pressable,
+  Button,
+} from "react-native";
 import React, { useState, useEffect, useRef } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Product from "../components/product/product";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
-import {FlashList} from '@shopify/flash-list'
+import { FlashList } from "@shopify/flash-list";
 import { goToIndex } from "../service/utils";
 
 const SubcategoryRankingScreen = ({ navigation, route }) => {
@@ -13,6 +20,8 @@ const SubcategoryRankingScreen = ({ navigation, route }) => {
   const [userId, setUserId] = useState("");
   const [pageNumber, setPageNumber] = useState(0);
   const flatListRef = useRef();
+  console.log("LOG ROUTE");
+  console.log(route);
 
   const getData = () => {
     try {
@@ -54,26 +63,35 @@ const SubcategoryRankingScreen = ({ navigation, route }) => {
         response.json().then((data) => {
           setCategory((previousData) => [...previousData, ...data]);
         });
+        goToIndex(flatListRef, route.params.item.id);
       } else {
       }
     });
   };
 
-
   return (
     <SafeAreaView>
-      <View style={{height: '100%', width: '100%'}}>
-        <Button title="test" onPress={()=>{goToIndex(flatListRef, 5)}}/>
+      <View style={{ height: "100%", width: "100%" }}>
+        {/* <Button
+          title="test"
+          onPress={() => {
+            goToIndex(flatListRef, route.params.item.id);
+          }}
+        /> */}
         <FlashList
           horizontal={false}
           ref={flatListRef}
-          estimatedItemSize={250}
-          columnWrapperStyle={styles.row} 
+          columnWrapperStyle={styles.row}
           numColumns={2}
           data={category}
           keyExtractor={(item) => item.id}
           renderItem={({ item, index }) => (
-            <Product id={item.id} key={index} item={item} navigation={navigation} />
+            <Product
+              id={item.id}
+              key={index}
+              item={item}
+              navigation={navigation}
+            />
           )}
           onEndReached={() => setPageNumber((previous) => (previous += 1))}
         />

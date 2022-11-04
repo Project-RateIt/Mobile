@@ -8,8 +8,8 @@ import {
   Alert,
   ScrollView,
   TouchableOpacity,
+  TextInput,
 } from "react-native";
-import { TextInput } from "react-native-paper";
 import * as ImagePicker from "expo-image-picker";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -187,22 +187,37 @@ const Settings = ({ navigation }) => {
               </TouchableOpacity>
             </View>
             <View style={styles.sectionContent}>
-              <TextInput onChangeText={setNewName} value={newName} />
+              <View style={styles.search_input}>
+                <TextInput
+                  onChangeText={setNewName}
+                  value={newName}
+                  placeholder="Nowa nazwa użytkownika"
+                  style={styles.search_input_content}
+                />
+              </View>
               <TouchableOpacity
                 style={styles.sectionContainer}
                 onPress={changeName}
               >
-                <Text>Zmień nazwę użytkownika</Text>
+                <Text style={styles.sectionTitle}>Zmień nazwę użytkownika</Text>
               </TouchableOpacity>
             </View>
 
             <View style={styles.sectionContent}>
-              <TextInput onChangeText={setNewEmail} value={newEmail} />
+              <View style={styles.search_input}>
+                <TextInput
+                  placeholder="Nowy email"
+                  onChangeText={setNewEmail}
+                  value={newEmail}
+                  keyboardType="email-address"
+                  style={styles.search_input_content}
+                />
+              </View>
               <TouchableOpacity
                 style={styles.sectionContainer}
                 onPress={changeEmail}
               >
-                <Text>Zmień email</Text>
+                <Text style={styles.sectionTitle}>Zmień email</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -249,7 +264,14 @@ const Settings = ({ navigation }) => {
             <Text style={styles.sectionTitle}>Polityka prywatności</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.logOut} onPress={logOut}>
-            <Text style={{ color: "white", textAlign: "center" }}>
+            <Text
+              style={{
+                color: "white",
+                textAlign: "center",
+                fontWeight: "600",
+                fontSize: 16,
+              }}
+            >
               Wyloguj się
             </Text>
           </TouchableOpacity>
@@ -271,20 +293,24 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     marginHorizontal: 10,
   },
+  section: {
+    marginTop: 15,
+  },
   avatar: {
-    width: 40,
-    height: 40,
+    width: 35,
+    height: 35,
     borderRadius: 300,
   },
   sectionTitle: {
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: "500",
     color: Colors.lessLightGreen,
   },
   sectionContainer: {
     flexDirection: "row",
-    height: 44,
-    justifyContent: "space-between",
+    height: 45,
+    justifyContent: "space-evenly",
+    alignItems: "center",
     backgroundColor: Colors.lightGreen,
     marginBottom: 10,
     borderRadius: 10,
@@ -305,6 +331,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   logOut: {
+    marginTop: 25,
     backgroundColor: Colors.primary,
     borderRadius: 10,
     color: "white",
@@ -314,5 +341,21 @@ const styles = StyleSheet.create({
   },
   sectionLegendText: {
     color: Colors.lessLightGreen,
+  },
+  search_input: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "center",
+    backgroundColor: Colors.lightGray,
+
+    padding: 10,
+    height: 50,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    textAlign: "center",
+  },
+  search_input_content: {
+    flex: 1,
+    textAlign: "center",
   },
 });

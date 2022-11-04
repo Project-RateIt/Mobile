@@ -41,7 +41,7 @@ export default function AddProduct({ navigation, route }) {
     getData();
   }, []);
 
-  const add = async () => {
+  const Add = async () => {
     if (productName.trim().length == 0) {
       alert("Podaj nazwę produktu");
       return;
@@ -91,8 +91,17 @@ export default function AddProduct({ navigation, route }) {
           >
             <Text style={styles.textFooter}>Nazwa produktu</Text>
             <View style={styles.action}>
-              <Feather
-                name="plus-square"
+              <Feather name="plus-square" size={24} color="black" />
+              <TextInput
+                onChangeText={(value) => setProductName(value)}
+                placeholder="Nazwa produktu"
+                style={styles.textInput}
+              />
+            </View>
+            <Text style={styles.textFooter}>Producent</Text>
+            <View style={styles.action}>
+              <Ionicons
+                name="person"
                 size={24}
                 color="black"
                 style={styles.icon}
@@ -110,7 +119,7 @@ export default function AddProduct({ navigation, route }) {
           ) : (
             <View style={styles.button}>
               <TouchableOpacity
-                onPress={add}
+                onPress={Add}
                 style={[
                   styles.signIn,
                   { borderColor: "#4dc2f8", borderWidth: 1 },
@@ -131,7 +140,7 @@ export default function AddProduct({ navigation, route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    //backgroundColor: "#009245",
+    backgroundColor: "#009245",
   },
   header: {
     flex: 1,
@@ -158,7 +167,7 @@ const styles = StyleSheet.create({
   },
   action: {
     flexDirection: "row",
-    marginTop: 10,
+    marginVertical: 15,
     borderBottomWidth: 1,
     borderBottomColor: "#f2f2f2",
     paddingBottom: 5,

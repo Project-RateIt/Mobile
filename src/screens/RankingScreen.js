@@ -1,18 +1,21 @@
-import {
-  StyleSheet,
-  Text,
-  View,
-  FlatList,
-  Pressable,
-  StatusBar,
-} from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Category from "../components/ranking/category";
+import {
+  Dimensions,
+  FlatList,
+  StyleSheet,
+  Text,
+  ToastAndroid,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import * as Animatable from "react-native-animatable";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { FlashList } from "@shopify/flash-list";
 
 const RankingScreen = ({ navigation }) => {
+  const animation = "bounceIn";
+
   const [category, setCategory] = useState([]);
   const [token, setToken] = useState("");
   const [userId, setUserId] = useState("");
@@ -33,10 +36,13 @@ const RankingScreen = ({ navigation }) => {
 
   useEffect(() => {
     getData();
-    getCategories();
-  }, []);
+    token !== "" && userId !== "" && getCategories();
+  }, [token, userId]);
 
-  const getCategories = async () => {
+  const getCategories = () => {
+    console.log("token");
+    console.log(token);
+    console.log(userId);
     fetch("http://91.227.2.183:443/products/getCategories", {
       method: "POST",
       headers: {
@@ -49,40 +55,94 @@ const RankingScreen = ({ navigation }) => {
     }).then((response) => {
       if (response.status === 200) {
         response.json().then((data) => {
-          setCategory(data);
+          setCategory((previousData) => [...previousData, ...data]);
         });
       } else {
-        console.log(response.text);
+        console.log(error);
       }
     });
   };
 
+  const ListEmptyComponent = () => {
+    const anim = {
+      0: { translateY: 0 },
+      0.25: { translateY: 50 },
+      0.5: { translateY: 0 },
+      0.75: { translateY: -50 },
+      1: { translateY: 0 },
+    };
+    return (
+      <View style={[styles.listEmpty]}>
+        <Animatable.Text
+          animation={anim}
+          easing="ease-in-out"
+          duration={300}
+          style={{ fontSize: 24 }}
+          iterationCount="infinite"
+        >
+          Trwa ładowanie
+        </Animatable.Text>
+      </View>
+    );
+  };
+
   return (
-    <SafeAreaView>
-      <StatusBar backgroundColor={"white"} barStyle={"dark-content"} />
-      <View style={styles.container}>
+    <SafeAreaView style={{ flex: 1 }}>
+      <Animatable.View easing={"ease-in-out"} duration={500}>
         <FlatList
           data={category}
           keyExtractor={(id) => id}
-          style={{ width: "100%" }}
-          renderItem={({ item }) => (
-            <Category id={item.id} item={item} navigation={navigation} />
+          numColumns={2}
+          renderItem={({ item, index }) => (
+            <Category
+              item={item}
+              navigation={navigation}
+              animation={animation}
+              index={index}
+            />
           )}
           showsVerticalScrollIndicator={false}
+          ListEmptyComponent={ListEmptyComponent}
         />
-      </View>
+      </Animatable.View>
     </SafeAreaView>
   );
 };
 
-export default RankingScreen;
-
 const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    height: "100%",
-    backgroundColor: "white",
+  name: {
+    fontWeight: "bold",
+    fontSize: 16,
+    color: "black",
+  },
+  separator: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: "rgba(0, 0, 0, .08)",
+  },
+  listEmpty: {
+    height: Dimensions.get("window").height,
+    alignItems: "center",
     justifyContent: "center",
+  },
+  listItem: {
+    width: Dimensions.get("window").width / 2 - 16,
+    backgroundColor: "white",
+    margin: 8,
+    borderRadius: 10,
+  },
+  image: {
+    height: 150,
+    margin: 5,
+    borderRadius: 10,
+    backgroundColor: "grey",
+  },
+  detailsContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 5,
+    flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
   },
 });
+
+export default RankingScreen;

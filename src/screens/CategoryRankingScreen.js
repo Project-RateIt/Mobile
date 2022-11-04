@@ -1,11 +1,20 @@
-import { StyleSheet, Text, View, FlatList, Pressable } from "react-native";
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Subcategory from "../components/ranking/subcategory";
+import {
+  Dimensions,
+  FlatList,
+  StyleSheet,
+  Text,
+  ToastAndroid,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import * as Animatable from "react-native-animatable";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { LinearGradient } from "expo-linear-gradient";
 
-const RankingScreen = ({ navigation, route }) => {
+const CategoryRankingScreen = ({ navigation, route }) => {
+  const animation = "bounceIn";
   const [category, setCategory] = useState([]);
   const [token, setToken] = useState("");
   const [userId, setUserId] = useState("");
@@ -54,26 +63,86 @@ const RankingScreen = ({ navigation, route }) => {
     });
   };
 
+  const ListEmptyComponent = () => {
+    const anim = {
+      0: { translateY: 0 },
+      0.25: { translateY: 50 },
+      0.5: { translateY: 0 },
+      0.75: { translateY: -50 },
+      1: { translateY: 0 },
+    };
+    return (
+      <View style={[styles.listEmpty]}>
+        <Animatable.Text
+          animation={anim}
+          easing="ease-in-out"
+          duration={300}
+          style={{ fontSize: 24 }}
+          iterationCount="infinite"
+        >
+          Trwa ładowanie
+        </Animatable.Text>
+      </View>
+    );
+  };
+
   return (
-    <SafeAreaView>
-      <FlatList
-        columnWrapperStyle={styles.row}
-        numColumns={3}
-        data={category}
-        keyExtractor={(id) => id}
-        renderItem={({ item }) => (
-          <Subcategory id={item.id} item={item} navigation={navigation} />
-        )}
-      />
+    <SafeAreaView style={{ flex: 1 }}>
+      <Animatable.View easing={"ease-in-out"} duration={500}>
+        <FlatList
+          data={category}
+          keyExtractor={(id) => id}
+          numColumns={2}
+          renderItem={({ item, index }) => (
+            <Subcategory
+              item={item}
+              navigation={navigation}
+              animation={animation}
+              index={index}
+            />
+          )}
+          showsVerticalScrollIndicator={false}
+          ListEmptyComponent={ListEmptyComponent}
+        />
+      </Animatable.View>
     </SafeAreaView>
   );
 };
 
-export default RankingScreen;
+export default CategoryRankingScreen;
 
 const styles = StyleSheet.create({
-  row: {
-    flex: 1,
-    justifyContent: "space-around",
+  name: {
+    fontWeight: "bold",
+    fontSize: 16,
+    color: "black",
+  },
+  separator: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: "rgba(0, 0, 0, .08)",
+  },
+  listEmpty: {
+    height: Dimensions.get("window").height,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  listItem: {
+    width: Dimensions.get("window").width / 2 - 16,
+    backgroundColor: "white",
+    margin: 8,
+    borderRadius: 10,
+  },
+  image: {
+    height: 150,
+    margin: 5,
+    borderRadius: 10,
+    backgroundColor: "grey",
+  },
+  detailsContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 5,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 });

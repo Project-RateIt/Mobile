@@ -6,7 +6,6 @@ import {
   ImageBackground,
   ScrollView,
   Dimensions,
-  StatusBar,
   TouchableOpacity,
 } from "react-native";
 import React, { useState, useEffect } from "react";

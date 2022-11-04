@@ -52,24 +52,21 @@ const SearchProductsScreen = ({ navigation, route }) => {
         userId,
       }),
     }).then((response) => {
+      console.log(response);
       if (response.status === 200) {
         response.json().then((data) => {
           setProduct((previousData) => [...previousData, ...data]);
         });
       } else {
-        console.warn(response);
+        console.log("wywala");
       }
     });
   };
 
   useEffect(() => {
     search();
-  }, [pageNumber, query]);
-
-  useEffect(() => {
     setProduct([]);
-  }, [query]);
-
+  }, [pageNumber, query]);
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.search_input}>
@@ -100,7 +97,6 @@ const SearchProductsScreen = ({ navigation, route }) => {
         renderItem={({ item }) => (
           <Product id={item.id} item={item} navigation={navigation} />
         )}
-        onEndReachedThreshold={3}
         onEndReached={() => setPageNumber((previous) => (previous += 1))}
         showsVerticalScrollIndicator={false}
       />

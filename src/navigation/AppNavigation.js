@@ -19,6 +19,7 @@ import SubategoryRankingScreen from "../screens/SubcategoryRankingScreen";
 import SplashScreen from "../screens/SplashScreen";
 import TabNavigator from "./TabNavigation";
 import AddProduct from "../screens/AddProduct";
+import Test from "../screens/Test";
 
 const { Navigator, Screen } = createStackNavigator();
 
@@ -26,7 +27,7 @@ const AppNavigation = () => {
   return (
     <NavigationContainer>
       <Navigator
-        initialRouteName="Splash"
+        initialRouteName="Login"
         screenOptions={{ headerShown: false }}
       >
         <Screen name="Splash" component={SplashScreen}></Screen>
@@ -52,6 +53,7 @@ const AppNavigation = () => {
           name="SubategoryRanking"
           component={SubategoryRankingScreen}
         ></Screen>
+        <Screen name="Test" component={Test}></Screen>
       </Navigator>
     </NavigationContainer>
   );

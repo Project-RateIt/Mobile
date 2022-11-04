@@ -1,22 +1,40 @@
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  Dimensions,
+} from "react-native";
 import React from "react";
-import { LinearGradient } from "expo-linear-gradient";
+import { Colors } from "../../constants/colors";
+import * as Animatable from "react-native-animatable";
 
-const Subcategory = ({ item, navigation }) => {
+const Subcategory = ({ item, navigation, index, animation }) => {
   const mainCategory = () =>
     navigation.navigate("SubategoryRanking", { item: item });
 
+  const colorAr = [
+    "#637aff",
+    "#60c5a8",
+    "#CCCCCC",
+    "#ff5454",
+    "#039a83",
+    "#dcb834",
+    "#8f06e4",
+    "skyblue",
+    "#ff4c98",
+  ];
+  const bgColor = (i) => colorAr[i % colorAr.length];
   return (
-    <LinearGradient
-      style={styles.listItem}
-      start={{ x: 0, y: 1 }}
-      end={{ x: 1, y: 0 }}
-      colors={["#009245", "#8cc631"]}
-    >
-      <TouchableOpacity style={styles.container} onPress={mainCategory}>
-        <Text style={styles.text}>{item.name}</Text>
-      </TouchableOpacity>
-    </LinearGradient>
+    <Animatable.View animation={animation} duration={500} delay={index * 150}>
+      <View style={styles.listItem}>
+        <TouchableOpacity activeOpacity={0.7} onPress={mainCategory}>
+          <View style={[styles.image, { backgroundColor: bgColor(index) }]}>
+            <Text style={styles.name}>{item.name}</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+    </Animatable.View>
   );
 };
 
@@ -24,18 +42,60 @@ export default Subcategory;
 
 const styles = StyleSheet.create({
   listItem: {
-    margin: 1,
     flex: 1,
+    margin: 1,
   },
   container: {
-    flex: 1,
-    width: "100%",
+    margin: 10,
+    borderRadius: 10,
     height: 100,
     justifyContent: "center",
     alignItems: "center",
+    borderWidth: 1,
+    borderColor: Colors.lightGray,
   },
-  text: {
+  image: {
+    height: 150,
+    margin: 5,
+    borderRadius: 10,
+    backgroundColor: "grey",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  name: {
     fontWeight: "bold",
-    fontSize: 16,
+    fontSize: 20,
+    color: "black",
+    textTransform: "capitalize",
+  },
+  separator: {
+    height: StyleSheet.hairlineWidth,
+    backgroundColor: "rgba(0, 0, 0, .08)",
+  },
+  listEmpty: {
+    height: Dimensions.get("window").height,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  listItem: {
+    width: Dimensions.get("window").width / 2 - 16,
+    backgroundColor: "white",
+    margin: 8,
+    borderRadius: 10,
+  },
+  image: {
+    height: 150,
+    margin: 5,
+    borderRadius: 10,
+    backgroundColor: "grey",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  detailsContainer: {
+    paddingHorizontal: 16,
+    paddingVertical: 5,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 });
