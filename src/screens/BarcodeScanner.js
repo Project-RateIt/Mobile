@@ -3,10 +3,12 @@ import { Text, View, StyleSheet, Alert, Button } from "react-native";
 import { BarCodeScanner } from "expo-barcode-scanner";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CameraPermission from "../components/cameraPermission/cameraPermission";
+import LottieView from "lottie-react-native";
 
 export default function BarcodeScanner({ navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [token, setToken] = useState("");
   const [userId, setUserId] = useState("");
 
@@ -35,10 +37,10 @@ export default function BarcodeScanner({ navigation }) {
     })();
   }, []);
 
-  const handleBarCodeScanned = ({ type, data }) => {
+  const handleBarCodeScanned = async ({ type, data }) => {
     setScanned(true);
-    console.log(data);
-    fetch("http://91.227.2.183:443/products/checkProduct", {
+    setLoading(true);
+    await fetch("http://91.227.2.183:443/products/checkProduct", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -54,15 +56,18 @@ export default function BarcodeScanner({ navigation }) {
         Alert.alert(null, parsedResopnse.name, [
           {
             text: "Ponownie",
-            onPress: () => setScanned(false),
+            onPress: () => {
+              setScanned(false), setLoading(false);
+            },
           },
           {
             text: "Dalej",
             onPress: () => {
+              setScanned(false);
+              setLoading(false);
               navigation.navigate("ProductDetails", {
                 item: parsedResopnse,
-              }),
-                setScanned(false);
+              });
             },
           },
         ]);
@@ -74,12 +79,15 @@ export default function BarcodeScanner({ navigation }) {
           [
             {
               text: "Ponownie",
-              onPress: () => setScanned(false),
+              onPress: () => {
+                setScanned(false), setLoading(false);
+              },
             },
             {
               text: "Dodaj produkt",
               onPress: () => {
                 setScanned(false);
+                setLoading(false);
                 navigation.navigate("AddProduct", { ean: data.toString() });
               },
             },
@@ -104,6 +112,16 @@ export default function BarcodeScanner({ navigation }) {
         onBarCodeScanned={scanned ? undefined : handleBarCodeScanned}
         style={StyleSheet.absoluteFillObject}
       />
+      {loading && (
+        <View style={styles.container}>
+          <LottieView
+            style={styles.lottie}
+            source={require("../../assets/lottie/5647-scan-barcode.json")}
+            autoPlay
+            loop
+          />
+        </View>
+      )}
     </View>
   );
 }
