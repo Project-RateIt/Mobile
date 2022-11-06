@@ -5,20 +5,18 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import CameraPermission from "../components/cameraPermission/cameraPermission";
 import LottieView from "lottie-react-native";
 
-export default function BarcodeScanner({ navigation }) {
+const BarcodeScanner = ({ navigation }) => {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [token, setToken] = useState("");
-  const [userId, setUserId] = useState("");
+  const [jwt, setJwt] = useState("");
 
   const getData = () => {
     try {
       AsyncStorage.getItem("body").then((value) => {
         if (value != null) {
           let body = JSON.parse(value);
-          setToken(body.token);
-          setUserId(body.user.id);
+          setJwt(body.jwt);
         }
       });
     } catch (error) {
@@ -38,45 +36,22 @@ export default function BarcodeScanner({ navigation }) {
   }, []);
 
   const handleBarCodeScanned = async ({ type, data }) => {
-    setScanned(true);
-    setLoading(true);
-    await fetch("http://91.227.2.183:443/products/checkProduct", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        token: token,
-        ean: data.toString(),
-        userId: userId,
-      }),
-    }).then(async (response) => {
-      if (response.status === 200) {
-        const parsedResopnse = await response.json();
-        Alert.alert(null, parsedResopnse.name, [
-          {
-            text: "Ponownie",
-            onPress: () => {
-              setScanned(false), setLoading(false);
-            },
+    try {
+      setScanned(true);
+      setLoading(true);
+      await fetch(
+        `http://91.227.2.183:83/api/products/checkProduct?ean=${data.toString()}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: "Bearer " + jwt,
           },
-          {
-            text: "Dalej",
-            onPress: () => {
-              setScanned(false);
-              setLoading(false);
-              navigation.navigate("ProductDetails", {
-                item: parsedResopnse,
-              });
-            },
-          },
-        ]);
-      }
-      if (response.status === 409) {
-        Alert.alert(
-          "Niestety nie mamy tego produktu",
-          "Kliknij dodaj aby dodać",
-          [
+        }
+      ).then(async (response) => {
+        if (response.status === 200) {
+          const parsedResopnse = await response.json();
+          Alert.alert(null, parsedResopnse.name, [
             {
               text: "Ponownie",
               onPress: () => {
@@ -84,19 +59,43 @@ export default function BarcodeScanner({ navigation }) {
               },
             },
             {
-              text: "Dodaj produkt",
+              text: "Dalej",
               onPress: () => {
                 setScanned(false);
                 setLoading(false);
-                navigation.navigate("AddProduct", { ean: data.toString() });
+                navigation.navigate("ProductDetails", {
+                  item: parsedResopnse,
+                });
               },
             },
-          ]
-        );
-      } else {
-        console.log(error);
-      }
-    });
+          ]);
+        }
+        if (response.status === 409) {
+          Alert.alert(
+            "Niestety nie mamy tego produktu",
+            "Kliknij dodaj aby dodać",
+            [
+              {
+                text: "Ponownie",
+                onPress: () => {
+                  setScanned(false), setLoading(false);
+                },
+              },
+              {
+                text: "Dodaj produkt",
+                onPress: () => {
+                  setScanned(false);
+                  setLoading(false);
+                  navigation.navigate("AddProduct", { ean: data.toString() });
+                },
+              },
+            ]
+          );
+        } else {
+          console.log(error);
+        }
+      });
+    } catch (error) {}
   };
 
   if (hasPermission === null) {
@@ -124,7 +123,9 @@ export default function BarcodeScanner({ navigation }) {
       )}
     </View>
   );
-}
+};
+
+export default BarcodeScanner;
 
 const styles = StyleSheet.create({
   container: {

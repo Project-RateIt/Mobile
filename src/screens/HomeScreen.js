@@ -10,29 +10,24 @@ import {
   TouchableOpacity,
   TextInput,
 } from "react-native";
-import { SafeAreaView } from "react-native-safe-area-context";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Product from "../components/product/product";
-import { LinearGradient } from "expo-linear-gradient";
 import { Colors } from "../constants/colors";
 import { Ionicons } from "@expo/vector-icons";
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = ({ navigation, route }) => {
   const [userAvatar, setUserAvatar] = useState("");
   const [isAdmin, setIsAdmin] = useState("");
-  const [token, setToken] = useState("");
   const [userId, setUserId] = useState("");
+  const [jwt, setJwt] = useState("");
   const [name, setName] = useState("");
-  const [query, setQuery] = useState("");
   const [viewedProduct, setViewedProduct] = useState([]);
   const [rankingProduct, setRankingProduct] = useState([]);
   const [searched, setSearched] = useState("");
 
   useEffect(() => {
     getData();
-    getProductRanking();
-    getViewedProduct();
-  }, [token, userId, name]);
+  }, []);
 
   const search = () => {
     navigation.navigate("SearchProducts", {
@@ -45,9 +40,12 @@ const HomeScreen = ({ navigation }) => {
       AsyncStorage.getItem("body").then((value) => {
         if (value != null) {
           let body = JSON.parse(value);
-          setUserId(body.user.id);
-          setToken(body.token);
-          setName(body.user.name);
+          console.log(body);
+          setJwt(body.jwt);
+          setName(body.name);
+          setUserId(body.id);
+          setViewedProduct(body.viewedProduct);
+          setRankingProduct(body.ratedProducts);
         }
       });
       fetch("http://91.227.2.183:5002/avatars_rateit/" + userId)
@@ -58,51 +56,6 @@ const HomeScreen = ({ navigation }) => {
     } catch (error) {
       console.log(error);
     }
-  };
-
-  const getProductRanking = async () => {
-    await fetch("http://91.227.2.183:443/products/search", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        token,
-        query,
-        page: 0,
-        userId,
-      }),
-    }).then((response) => {
-      if (response.status === 200) {
-        response.json().then((data) => {
-          setRankingProduct(data);
-        });
-      } else {
-        console.warn(response);
-      }
-    });
-  };
-
-  const getViewedProduct = async () => {
-    await fetch("http://91.227.2.183:443/products/getViewedProduct", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        token,
-        page: 0,
-        userId,
-      }),
-    }).then((response) => {
-      if (response.status === 200) {
-        response.json().then((data) => {
-          setViewedProduct(data);
-        });
-      } else {
-        console.warn(response);
-      }
-    });
   };
 
   return (

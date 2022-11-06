@@ -34,11 +34,9 @@ const SplashScreen = ({ navigation }) => {
   };
 
   const testApi = async () => {
-    return await fetch("http://91.227.2.183:443/example/test").then(
-      (response) => {
-        return response.status === 404;
-      }
-    );
+    return await fetch("http://91.227.2.183:83/").then((response) => {
+      return response.status === 200;
+    });
   };
 
   const getUserExist = async () => {

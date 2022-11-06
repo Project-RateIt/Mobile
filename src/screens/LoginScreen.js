@@ -33,17 +33,19 @@ export default function LoginScreen({ navigation }) {
       return;
     }
     try {
-      const body = { email, password };
       setLoading(true);
-      fetch("http://91.227.2.183:443/user/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-      }).then(async (response) => {
+      fetch(
+        `http://91.227.2.183:83/api/user/login?email=${email}&password=${password}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      ).then(async (response) => {
         if (response.status === 200) {
           const result = await response.json();
+
           await AsyncStorage.setItem("body", JSON.stringify(result));
           navigation.navigate("Home");
         } else {

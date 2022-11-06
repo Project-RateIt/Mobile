@@ -17,16 +17,15 @@ const SearchProductsScreen = ({ navigation, route }) => {
   const [query, setQuery] = useState("");
   const [pageNumber, setPageNumber] = useState(0);
   const [product, setProduct] = useState([]);
-  const [token, setToken] = useState("");
-  const [userId, setUserId] = useState("");
+  const [jwt, setJwt] = useState("");
+  console.log(jwt);
 
   const getData = () => {
     try {
       AsyncStorage.getItem("body").then((value) => {
         if (value != null) {
           let body = JSON.parse(value);
-          setToken(body.token);
-          setUserId(body.user.id);
+          setJwt(body.jwt);
         }
       });
     } catch (error) {
@@ -36,31 +35,32 @@ const SearchProductsScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     getData();
-    token !== "" && userId !== "" && search();
-  }, [token, userId]);
+    search();
+  }, []);
 
-  const search = () => {
-    fetch("http://91.227.2.183:443/products/search", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        token,
-        query,
-        page: pageNumber,
-        userId,
-      }),
-    }).then((response) => {
-      console.log(response);
-      if (response.status === 200) {
-        response.json().then((data) => {
-          setProduct((previousData) => [...previousData, ...data]);
-        });
-      } else {
-        console.log("wywala");
-      }
-    });
+  const search = async () => {
+    try {
+      await fetch(
+        `http://91.227.2.183:83/api/products/search?query=${query}&page=${pageNumber}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: "Bearer " + jwt,
+          },
+        }
+      ).then((response) => {
+        if (response.status === 200) {
+          response.json().then((data) => {
+            setRankingProduct(data);
+          });
+        } else {
+          console.warn(response);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {

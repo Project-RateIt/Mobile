@@ -1,31 +1,22 @@
 import React, { useEffect, useRef, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Subcategory from "../components/ranking/subcategory";
-import {
-  Dimensions,
-  FlatList,
-  StyleSheet,
-  Text,
-  ToastAndroid,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Dimensions, FlatList, StyleSheet, View } from "react-native";
 import * as Animatable from "react-native-animatable";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const CategoryRankingScreen = ({ navigation, route }) => {
   const animation = "bounceIn";
   const [category, setCategory] = useState([]);
-  const [token, setToken] = useState("");
-  const [userId, setUserId] = useState("");
+  const [jwt, setJwt] = useState("");
+  const [pageNumber, setPageNumber] = useState(0);
 
   const getData = () => {
     try {
       AsyncStorage.getItem("body").then((value) => {
         if (value != null) {
           let body = JSON.parse(value);
-          setToken(body.token);
-          setUserId(body.user.id);
+          setJwt(body.jwt);
         }
       });
     } catch (error) {
@@ -35,24 +26,25 @@ const CategoryRankingScreen = ({ navigation, route }) => {
 
   useEffect(() => {
     getData();
-    token !== "" && userId !== "" && getCategories();
-  }, [token, userId]);
+    getCategories();
+  }, [pageNumber]);
 
   const getCategories = () => {
-    console.log("token");
-    console.log(token);
-    console.log(userId);
-    fetch("http://91.227.2.183:443/products/getSubcategories", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        token: token,
-        userId: userId,
-        categoryId: route.params.item.id,
-      }),
-    }).then((response) => {
+    fetch(
+      `http://91.227.2.183:83/api/products/getSubcategoryRanking?page=${pageNumber}&categoryId=${route.params.item.id}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: "Bearer " + jwt,
+        },
+        body: JSON.stringify({
+          token: token,
+          userId: userId,
+          categoryId: route.params.item.id,
+        }),
+      }
+    ).then((response) => {
       if (response.status === 200) {
         response.json().then((data) => {
           setCategory((previousData) => [...previousData, ...data]);
@@ -103,6 +95,7 @@ const CategoryRankingScreen = ({ navigation, route }) => {
           )}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={ListEmptyComponent}
+          onEndReached={() => setPageNumber((previous) => (previous += 1))}
         />
       </Animatable.View>
     </SafeAreaView>

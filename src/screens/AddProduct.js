@@ -17,19 +17,18 @@ import * as Animatable from "react-native-animatable";
 import { Feather } from "@expo/vector-icons";
 import { ActivityIndicator } from "react-native-paper";
 
-export default function AddProduct({ navigation, route }) {
-  const [token, setToken] = useState("");
-  const [userId, setUserId] = useState("");
-  const [productName, setProductName] = useState("");
+const AddProduct = ({ navigation, route }) => {
+  const [name, setName] = useState("");
+  const [producer, setProducer] = useState("");
   const [loading, setLoading] = useState(false);
+  const [jwt, setJwt] = useState("");
 
   const getData = () => {
     try {
       AsyncStorage.getItem("body").then((value) => {
         if (value != null) {
           let body = JSON.parse(value);
-          setToken(body.token);
-          setUserId(body.user.id);
+          setJwt(body.jwt);
         }
       });
     } catch (error) {
@@ -42,33 +41,37 @@ export default function AddProduct({ navigation, route }) {
   }, []);
 
   const Add = async () => {
-    if (productName.trim().length == 0) {
+    if (name.trim().length == 0) {
       alert("Podaj nazwę produktu");
       return;
     }
-    setLoading(true);
-    fetch("http://91.227.2.183:443/products/addProduct", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        token,
-        userId,
-        productName,
-        ean: route.params.ean,
-      }),
-    }).then((response) => {
-      response.json();
-      if (response.status === 200) {
-        setLoading(false);
-        alert("Dodano produkt");
-        navigation.goBack();
-      } else {
-        setLoading(false);
-        alert("Wystąpił błąd");
-      }
-    });
+    try {
+      setLoading(true);
+      fetch("http://91.227.2.183:443/products/addProduct", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + jwt,
+        },
+        body: JSON.stringify({
+          name,
+          producer,
+          ean: route.params.ean,
+        }),
+      }).then((response) => {
+        response.json();
+        if (response.status === 200) {
+          setLoading(false);
+          alert("Dodano produkt");
+          navigation.goBack();
+        } else {
+          setLoading(false);
+          alert("Wystąpił błąd");
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -93,7 +96,7 @@ export default function AddProduct({ navigation, route }) {
             <View style={styles.action}>
               <Feather name="plus-square" size={24} color="black" />
               <TextInput
-                onChangeText={(value) => setProductName(value)}
+                onChangeText={(value) => setName(value)}
                 placeholder="Nazwa produktu"
                 style={styles.textInput}
               />
@@ -107,12 +110,22 @@ export default function AddProduct({ navigation, route }) {
                 style={styles.icon}
               />
               <TextInput
-                onChangeText={(value) => setProductName(value)}
-                placeholder="Nazwa produktu"
+                onChangeText={(value) => setProducer(value)}
+                placeholder="Producent"
                 style={styles.textInput}
               />
             </View>
           </KeyboardAvoidingView>
+
+          <TouchableOpacity
+            style={styles.addImage}
+            onPress={navigation.navigate("Test")}
+          >
+            <Ionicons name="add-circle" size={32} color="black" />
+            <Text style={{ fontSize: 20, fontWeight: "400", marginLeft: 10 }}>
+              Dodaj zdjęcie
+            </Text>
+          </TouchableOpacity>
 
           {loading ? (
             <ActivityIndicator />
@@ -135,7 +148,9 @@ export default function AddProduct({ navigation, route }) {
       </View>
     </TouchableWithoutFeedback>
   );
-}
+};
+
+export default AddProduct;
 
 const styles = StyleSheet.create({
   container: {
@@ -200,5 +215,14 @@ const styles = StyleSheet.create({
     left: 0,
     marginTop: 50,
     marginLeft: 15,
+  },
+  addImage: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    borderWidth: 1,
+    borderBottomColor: "grey",
+    borderRadius: 10,
+    padding: 5,
   },
 });

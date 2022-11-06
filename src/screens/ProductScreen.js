@@ -15,6 +15,7 @@ import { Ionicons } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ProductScreen = ({ route, navigation }) => {
+  const [jwt, setJwt] = useState("");
   const rate = () => {
     navigation.navigate("Rate", { item: route.params.item });
   };
@@ -25,16 +26,12 @@ const ProductScreen = ({ route, navigation }) => {
     route.params.item.rateSum / route.params.item.rateCount
   );
 
-  const [token, setToken] = useState("");
-  const [userId, setUserId] = useState("");
-
   const getData = () => {
     try {
       AsyncStorage.getItem("body").then((value) => {
         if (value != null) {
           let body = JSON.parse(value);
-          setToken(body.token);
-          setUserId(body.user.id);
+          setJwt(body.jwt);
         }
       });
     } catch (error) {
@@ -43,24 +40,26 @@ const ProductScreen = ({ route, navigation }) => {
   };
 
   const addToViewedProducts = async () => {
-    await fetch("http://91.227.2.183:443/products/viewProduct", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        token,
-        productId: route.params.item.id,
-        userId,
-      }),
-    }).then((response) => {
-      if (response.status === 200) {
-        console.log("udalo sie");
-      } else {
-        console.log("wypierdala sie");
-        console.log(response);
-      }
-    });
+    try {
+      await fetch(
+        `http://91.227.2.183:83/api/products/viewProduct?productId=${route.params.item.id}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: "Bearer " + jwt,
+          },
+        }
+      ).then((response) => {
+        if (response.status === 200) {
+          console.log("Dodalo do obserwowanych");
+        } else {
+          console.warn(response);
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -71,7 +70,7 @@ const ProductScreen = ({ route, navigation }) => {
     } else {
       setRating("Ocena " + avgRate + "/10");
     }
-  }, [token, userId]);
+  }, []);
 
   return (
     <View style={styles.container}>

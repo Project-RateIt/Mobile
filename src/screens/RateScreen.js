@@ -18,17 +18,14 @@ import { MaterialIcons } from "@expo/vector-icons";
 
 const RateScreen = ({ navigation, route }) => {
   const [rate, setRate] = useState("");
-
-  const [token, setToken] = useState("");
-  const [userId, setUserId] = useState("");
+  const [jwt, setJwt] = useState("");
 
   const getData = () => {
     try {
       AsyncStorage.getItem("body").then((value) => {
         if (value != null) {
           let body = JSON.parse(value);
-          setToken(body.token);
-          setUserId(body.user.id);
+          setJwt(body.jwt);
         }
       });
     } catch (error) {
@@ -40,51 +37,56 @@ const RateScreen = ({ navigation, route }) => {
     getData();
   }, []);
 
-  const rated = () => {
+  const rated = async () => {
     if (rate < 11) {
-      fetch("http://91.227.2.183:443/products/rate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          token,
-          userId,
-          productId: route.params.item.id,
-          rate: rate,
-        }),
-      }).then((response) => {
-        if (response.status === 200) {
-          alert("Oceniono pomyślnie");
-          navigation.navigate("ProductDetails", { item: route.params.item });
-        } else {
-          alert("Spróbuj ponownie");
-        }
-      });
+      try {
+        await fetch(
+          `http://91.227.2.183:83/api/products/rate?productId=${route.params.item.id}&rate=${rate}`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: "Bearer " + jwt,
+            },
+          }
+        ).then((response) => {
+          if (response.status === 200) {
+            alert("Oceniono pomyślnie");
+            navigation.navigate("ProductDetails", { item: route.params.item });
+          } else {
+            alert("Spróbuj ponownie");
+          }
+        });
+      } catch (error) {
+        console.log(error);
+      }
     } else {
       alert("Oceń od 1 do 10");
     }
   };
 
-  const unrate = () => {
-    fetch("http://91.227.2.183:443/products/unrate", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        token,
-        userId,
-        productId: route.params.item.id,
-      }),
-    }).then((response) => {
-      if (response.status === 200) {
-        alert("Usunięto ocenę pomyślnie");
-        navigation.navigate("ProductDetails", { item: route.params.item });
-      } else {
-        alert("Spróbuj ponownie");
-      }
-    });
+  const unrate = async () => {
+    try {
+      await fetch(
+        `http://91.227.2.183:83/api/products/unrate?productId=${route.params.item.id}`,
+        {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: "Bearer " + jwt,
+          },
+        }
+      ).then((response) => {
+        if (response.status === 200) {
+          alert("Usunięto ocenę pomyślnie");
+          navigation.navigate("ProductDetails", { item: route.params.item });
+        } else {
+          alert("Spróbuj ponownie");
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (

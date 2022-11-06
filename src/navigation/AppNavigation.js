@@ -20,6 +20,7 @@ import SplashScreen from "../screens/SplashScreen";
 import TabNavigator from "./TabNavigation";
 import AddProduct from "../screens/AddProduct";
 import Test from "../screens/Test";
+import ActiveUserScreen from "../screens/ActiveUserScreen";
 
 const { Navigator, Screen } = createStackNavigator();
 
@@ -53,7 +54,8 @@ const AppNavigation = () => {
           name="SubategoryRanking"
           component={SubategoryRankingScreen}
         ></Screen>
-        <Screen name="Test" component={Test}></Screen>
+        {/* <Screen name="Test" component={Test}></Screen> */}
+        <Screen name="ActiveUserScreen" component={ActiveUserScreen}></Screen>
       </Navigator>
     </NavigationContainer>
   );

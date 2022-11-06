@@ -10,6 +10,7 @@ import {
   Alert,
   Keyboard,
   TouchableWithoutFeedback,
+  ScrollView,
 } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
@@ -17,7 +18,7 @@ import * as Animatable from "react-native-animatable";
 import { MaterialIcons } from "@expo/vector-icons";
 import { ActivityIndicator } from "react-native-paper";
 
-export default function RegisterScreen({ navigation }) {
+const RegisterScreen = ({ navigation }) => {
   const [name, setName] = useState("");
   const [surname, setSurname] = useState("");
   const [email, setEmail] = useState("");
@@ -35,29 +36,30 @@ export default function RegisterScreen({ navigation }) {
       alert("Podaj dane rejestracji");
       return;
     }
-    setLoading(true);
-    fetch("http://91.227.2.183:443/user/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name,
-        surname,
-        email,
-        password,
-      }),
-    }).then((response) => {
-      response.json();
-      if (response.status === 200) {
-        setLoading(false);
-        alert("Rejestracja powiodła się");
-        navigation.navigate("Login");
-      } else {
-        setLoading(false);
-        alert("Błędne dane logowania");
-      }
-    });
+    try {
+      setLoading(true);
+      fetch(
+        `http://91.227.2.183:83/api/user/register?name=${name.trim()}&surname=${surname.trim()}&email=${email.trim()}&password=${password.trim()}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      ).then((response) => {
+        response.json();
+        if (response.status === 200) {
+          alert("Rejestracja powiodła się");
+          navigation.navigate("ActiveUserScreen", { email: email });
+        } else {
+          alert("Wystąpił bląd spróbuj ponownie");
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -78,76 +80,80 @@ export default function RegisterScreen({ navigation }) {
           <KeyboardAvoidingView
             behavior={Platform.OS === "ios" ? "padding" : null}
           >
-            <Text style={styles.textFooter}>Imię</Text>
-            <View style={styles.action}>
-              <FontAwesome
-                name="user"
-                size={20}
-                color="black"
-                style={styles.icon}
-              />
-              <TextInput
-                onChangeText={(value) => setName(value)}
-                placeholder="Imię"
-                style={styles.textInput}
-              />
-            </View>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <Text style={styles.textFooter}>Imię</Text>
+              <View style={styles.action}>
+                <FontAwesome
+                  name="user"
+                  size={20}
+                  color="black"
+                  style={styles.icon}
+                />
+                <TextInput
+                  onChangeText={(value) => setName(value)}
+                  placeholder="Imię"
+                  style={styles.textInput}
+                />
+              </View>
 
-            <Text style={[styles.textFooter, { marginTop: 25 }]}>Nazwisko</Text>
-            <View style={styles.action}>
-              <FontAwesome
-                name="user"
-                size={20}
-                color="black"
-                style={styles.icon}
-              />
-              <TextInput
-                onChangeText={(value) => setSurname(value)}
-                placeholder="Nazwisko"
-                style={styles.textInput}
-              />
-            </View>
+              <Text style={[styles.textFooter, { marginTop: 25 }]}>
+                Nazwisko
+              </Text>
+              <View style={styles.action}>
+                <FontAwesome
+                  name="user"
+                  size={20}
+                  color="black"
+                  style={styles.icon}
+                />
+                <TextInput
+                  onChangeText={(value) => setSurname(value)}
+                  placeholder="Nazwisko"
+                  style={styles.textInput}
+                />
+              </View>
 
-            <Text style={[styles.textFooter, { marginTop: 25 }]}>E-mail</Text>
-            <View style={styles.action}>
-              <MaterialIcons
-                name="email"
-                size={20}
-                color="black"
-                style={styles.icon}
-              />
-              <TextInput
-                onChangeText={(value) => setEmail(value)}
-                autoCapitalize="none"
-                keybordType="email-address"
-                placeholder="E-mail"
-                style={styles.textInput}
-              />
-            </View>
+              <Text style={[styles.textFooter, { marginTop: 25 }]}>E-mail</Text>
+              <View style={styles.action}>
+                <MaterialIcons
+                  name="email"
+                  size={20}
+                  color="black"
+                  style={styles.icon}
+                />
+                <TextInput
+                  onChangeText={(value) => setEmail(value)}
+                  autoCapitalize="none"
+                  keybordType="email-address"
+                  placeholder="E-mail"
+                  style={styles.textInput}
+                />
+              </View>
 
-            <Text style={[styles.textFooter, { marginTop: 25 }]}>Hasło</Text>
-            <View style={styles.action}>
-              <FontAwesome
-                name="lock"
-                size={20}
-                color="black"
-                style={styles.icon}
-              />
-              <TextInput
-                autoCapitalize="none"
-                placeholder="Hasło"
-                style={styles.textInput}
-                onChangeText={(value) => setPassword(value)}
-                secureTextEntry={passwordVisible}
-              />
-              <Ionicons
-                style={styles.icon}
-                name={passwordVisible ? "eye-outline" : "eye-off-outline"}
-                onPress={() => setPasswordVisible(!passwordVisible)}
-                size={20}
-                color="black"
-              />
-            </View>
+              <Text style={[styles.textFooter, { marginTop: 25 }]}>Hasło</Text>
+              <View style={styles.action}>
+                <FontAwesome
+                  name="lock"
+                  size={20}
+                  color="black"
+                  style={styles.icon}
+                />
+                <TextInput
+                  autoCapitalize="none"
+                  placeholder="Hasło"
+                  style={styles.textInput}
+                  onChangeText={(value) => setPassword(value)}
+                  secureTextEntry={passwordVisible}
+                />
+                <Ionicons
+                  style={styles.icon}
+                  name={passwordVisible ? "eye-outline" : "eye-off-outline"}
+                  onPress={() => setPasswordVisible(!passwordVisible)}
+                  size={20}
+                  color="black"
+                />
+              </View>
+            </ScrollView>
           </KeyboardAvoidingView>
 
           {loading ? (
@@ -171,7 +177,9 @@ export default function RegisterScreen({ navigation }) {
       </View>
     </TouchableWithoutFeedback>
   );
-}
+};
+
+export default RegisterScreen;
 
 const styles = StyleSheet.create({
   container: {

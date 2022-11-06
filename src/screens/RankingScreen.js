@@ -1,32 +1,22 @@
 import React, { useEffect, useRef, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import Category from "../components/ranking/category";
-import {
-  Dimensions,
-  FlatList,
-  StyleSheet,
-  Text,
-  ToastAndroid,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { Dimensions, FlatList, StyleSheet, View } from "react-native";
 import * as Animatable from "react-native-animatable";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const RankingScreen = ({ navigation }) => {
   const animation = "bounceIn";
-
+  const [pageNumber, setPageNumber] = useState(0);
   const [category, setCategory] = useState([]);
-  const [token, setToken] = useState("");
-  const [userId, setUserId] = useState("");
+  const [jwt, setJwt] = useState("");
 
   const getData = () => {
     try {
       AsyncStorage.getItem("body").then((value) => {
         if (value != null) {
           let body = JSON.parse(value);
-          setToken(body.token);
-          setUserId(body.user.id);
+          setJwt(body.jwt);
         }
       });
     } catch (error) {
@@ -36,23 +26,20 @@ const RankingScreen = ({ navigation }) => {
 
   useEffect(() => {
     getData();
-    token !== "" && userId !== "" && getCategories();
-  }, [token, userId]);
+    getCategories();
+  }, [pageNumber]);
 
-  const getCategories = () => {
-    console.log("token");
-    console.log(token);
-    console.log(userId);
-    fetch("http://91.227.2.183:443/products/getCategories", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        token: token,
-        userId: userId,
-      }),
-    }).then((response) => {
+  const getCategories = async () => {
+    await fetch(
+      `http://91.227.2.183:83/api/products/getCategories?page=${pageNumber}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: "Bearer " + jwt,
+        },
+      }
+    ).then((response) => {
       if (response.status === 200) {
         response.json().then((data) => {
           setCategory((previousData) => [...previousData, ...data]);
@@ -76,7 +63,7 @@ const RankingScreen = ({ navigation }) => {
         <Animatable.Text
           animation={anim}
           easing="ease-in-out"
-          duration={300}
+          duration={500}
           style={{ fontSize: 24 }}
           iterationCount="infinite"
         >
@@ -103,6 +90,7 @@ const RankingScreen = ({ navigation }) => {
           )}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={ListEmptyComponent}
+          onEndReached={() => setPageNumber((previous) => (previous += 1))}
         />
       </Animatable.View>
     </SafeAreaView>

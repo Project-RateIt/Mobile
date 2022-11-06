@@ -8,11 +8,8 @@ import {
   Image,
 } from "react-native";
 import { useEffect, useRef, useState } from "react";
-import { Camera } from "expo-camera";
-import * as Sharing from "expo-sharing";
-import * as MediaLibrary from "expo-media-library";
 
-export default function App() {
+export default function App({ navigation }) {
   let cameraRef = useRef();
   const [hasCameraPermission, setHasCameraPermission] = useState();
   const [hasMediaLibraryPermission, setHasMediaLibraryPermission] = useState();
@@ -68,11 +65,17 @@ export default function App() {
           style={styles.preview}
           source={{ uri: "data:image/jpg;base64," + photo.base64 }}
         />
-        <Button title="Share" onPress={sharePic} />
+        <Button title="Share" onPress={console.log("dziala")} />
         {hasMediaLibraryPermission ? (
-          <Button title="Save" onPress={savePhoto} />
+          <Button
+            title="Save"
+            onPress={navigation.navigate("AddProduct", { image: photo })}
+          />
         ) : undefined}
-        <Button title="Discard" onPress={() => setPhoto(undefined)} />
+        <Button
+          title="Discard"
+          onPress={navigation.navigate("AddProduct", { image: photo })}
+        />
       </SafeAreaView>
     );
   }

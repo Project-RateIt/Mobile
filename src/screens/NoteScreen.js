@@ -18,17 +18,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const NoteScreen = ({ route, navigation }) => {
   const [note, setNote] = useState("");
-
-  const [token, setToken] = useState("");
-  const [userId, setUserId] = useState("");
+  const [jwt, setJwt] = useState("");
 
   const getData = () => {
     try {
       AsyncStorage.getItem("body").then((value) => {
         if (value != null) {
           let body = JSON.parse(value);
-          setToken(body.token);
-          setUserId(body.user.id);
+          setJwt(body.jwt);
         }
       });
     } catch (error) {
@@ -40,26 +37,28 @@ const NoteScreen = ({ route, navigation }) => {
     getData();
   });
 
-  const submit = () => {
-    fetch("http://91.227.2.183:443/products/note", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        token,
-        userId,
-        productId: route.params.item.id,
-        note: note,
-      }),
-    }).then((response) => {
-      if (response.status === 200) {
-        alert("Dodano notatke");
-        navigation.navigate("ProductDetails", { item: route.params.item });
-      } else {
-        alert("Spróbuj ponownie");
-      }
-    });
+  const submit = async () => {
+    try {
+      await fetch(
+        `http://91.227.2.183:83/api/products/note?productId=${route.params.item.id}&rate=${note}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: "Bearer " + jwt,
+          },
+        }
+      ).then((response) => {
+        if (response.status === 200) {
+          alert("Dodano notatke");
+          navigation.navigate("ProductDetails", { item: route.params.item });
+        } else {
+          alert("Spróbuj ponownie");
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
